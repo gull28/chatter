@@ -2,36 +2,63 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import Toast from 'react-native-toast-message';
 
 const db = firestore();
 export const ViewGroup = ({navigation, route}) => {
   const {groupData} = route.params;
-  const {groupDescription, name, id} = groupData;
+  const {groupDescription, name, id, count, bannedUsers, participants} =
+    groupData;
 
   const user = firebase.auth().currentUser;
+
+  const isBanned = bannedUsers.includes(user.uid);
+  const isFull = participants.length >= count;
 
   const onClose = () => {
     navigation.goBack();
   };
 
   const joinGroup = async () => {
-    try {
-      const groupRef = db.collection('chatGroups').doc(id);
-      await groupRef.update({
-        participants: firestore.FieldValue.arrayUnion(user.uid),
-      });
-      navigation.navigate('GroupChatPage', {chatId: id});
-    } catch (error) {
+    if (isBanned) {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: error.message,
+        text2: 'You are banned from this group.',
         visibilityTime: 3000,
         autoHide: true,
         topOffset: 30,
         bottomOffset: 40,
       });
+    } else if (isFull) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'This group is already full.',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
+    } else {
+      // join the group
+      try {
+        const groupRef = db.collection('chatGroups').doc(id);
+        await groupRef.update({
+          participants: firestore.FieldValue.arrayUnion(user.uid),
+        });
+        navigation.navigate('GroupChatPage', {chatId: id});
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: error.message,
+          visibilityTime: 3000,
+          autoHide: true,
+          topOffset: 30,
+          bottomOffset: 40,
+        });
+      }
     }
   };
 

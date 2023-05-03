@@ -12,38 +12,26 @@ import FriendListItem from './FriendsListItem';
 import LoadingSpinner from './LoadingSpinner';
 const db = firestore();
 
-export const FriendsList = ({navigation}) => {
+export const FriendsList = ({
+  navigation,
+  getUserListData,
+  isGroupList = false,
+  groupInfo = {},
+}) => {
   const currentUser = firebase.auth().currentUser.uid;
   const [friends, setFriends] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const getUserFriends = async userId => {
-    const userDocRef = db.collection('users').doc(userId);
-    const userDoc = await userDocRef.get();
-    const friends = userDoc.get('friends') || [];
-    let userFriendsNames = [];
-    for (const friendId of friends) {
-      const userFriendName = db.collection('users').doc(friendId);
-      const userFriendNameDoc = await userFriendName.get();
-      const friendName = userFriendNameDoc.data().username;
-      userFriendsNames.push({id: friendId, username: friendName});
-    }
-    return userFriendsNames || [];
-  };
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
     const fetchFriends = async () => {
       setIsLoading(true);
-      const friendsList = await getUserFriends(currentUser);
+      const friendsList = await getUserListData();
       setFriends(friendsList);
       setIsLoading(false);
     };
     fetchFriends();
   }, []);
-
-  const handleFriendPress = friendId => {
-    // Do something when a friend is clicked
-  };
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -52,25 +40,41 @@ export const FriendsList = ({navigation}) => {
   if (friends.length === 0) {
     return (
       <View style={styles.container}>
-        <Text>No friends found.</Text>
+        <Text>No users found.</Text>
       </View>
     );
   }
 
   return (
-    <FlatList
-      data={friends}
-      renderItem={({item}) => (
-        <FriendListItem
-          friendId={item.id}
-          friendName={item.username}
-          onPress={() =>
-            navigation.navigate('OtherUserProfilePage', {result: item})
-          }
-        />
-      )}
-      keyExtractor={(item, index) => index.toString()}
-    />
+    <>
+      <FlatList
+        style={styles.flatList}
+        data={friends}
+        renderItem={({item}) => (
+          <FriendListItem
+            friendId={item.id}
+            friendName={item.username}
+            groupInfo={groupInfo}
+            isOptionShown={showOptions}
+            onPress={() => {
+              if (isGroupList) {
+                if (
+                  currentUser === groupInfo?.groupOwner ||
+                  groupInfo?.admins.includes(currentUser)
+                ) {
+                  setShowOptions(!showOptions);
+                } else {
+                  navigation.navigate('OtherUserProfilePage', {result: item});
+                }
+              } else {
+                navigation.navigate('OtherUserProfilePage', {result: item});
+              }
+            }}
+          />
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </>
   );
 };
 
@@ -79,5 +83,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  flatList: {
+    width: '100%',
   },
 });

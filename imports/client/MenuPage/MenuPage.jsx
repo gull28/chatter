@@ -14,6 +14,7 @@ import {SearchResult} from '../../components/SearchResult';
 import TabView from '../../components/TabView';
 import Dropdown from '../../components/Dropdown';
 import {FriendsList} from '../../components/FriendsList';
+import GroupList from '../../components/GroupList';
 
 const items = [
   {label: 'Public', value: true},
@@ -36,7 +37,6 @@ export const MenuPage = ({navigation, route}) => {
   const [groupDescription, setGroupDescription] = useState('');
 
   const {user} = route.params;
-  console.log(user);
 
   const tabs = [{label: 'Groups'}, {label: 'Users'}];
 
@@ -117,6 +117,8 @@ export const MenuPage = ({navigation, route}) => {
         name,
         groupOwner: user.uid,
         accessibility,
+        admins: [],
+        bannedUsers: [],
         region,
         groupDescription,
         participants: [user.uid],
@@ -171,6 +173,20 @@ export const MenuPage = ({navigation, route}) => {
       console.log(error);
       return false;
     }
+  };
+
+  const getUserFriends = async userId => {
+    const userDocRef = db.collection('users').doc(userId);
+    const userDoc = await userDocRef.get();
+    const friends = userDoc.get('friends') || [];
+    let userFriendsNames = [];
+    for (const friendId of friends) {
+      const userFriendName = db.collection('users').doc(friendId);
+      const userFriendNameDoc = await userFriendName.get();
+      const friendName = userFriendNameDoc.data().username;
+      userFriendsNames.push({id: friendId, username: friendName});
+    }
+    return userFriendsNames || [];
   };
 
   useState(() => {
@@ -234,9 +250,12 @@ export const MenuPage = ({navigation, route}) => {
             onTabChange={handleMenuTabChange}
           />
           {selectedMenuTab ? (
-            <FriendsList navigation={navigation} />
+            <FriendsList
+              navigation={navigation}
+              getUserListData={() => getUserFriends(currentUser)}
+            />
           ) : (
-            <Text>Hello world</Text>
+            <GroupList navigation={navigation} />
           )}
           <TouchableOpacity
             style={styles.newChatButton}

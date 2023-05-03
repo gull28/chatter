@@ -6,10 +6,13 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  Modal,
+  StyleSheet,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
 import ChatMessage from '../../components/ChatMessage';
+import {FriendsList} from '../../components/FriendsList';
 
 const db = firestore();
 
@@ -18,7 +21,14 @@ export const GroupChatPage = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [chatInfo, setChatInfo] = useState({});
+  const [showOptions, setShowOptions] = useState(false);
+  const [isGroupOwner, setIsGroupOwner] = useState(false);
+  const [isUserGroupAdmin, setIsUserGroupAdmin] = useState(false);
   const flatListRef = useRef(null);
+
+  const currentUser = firebase.auth().currentUser;
 
   const handleContentSizeChange = () => {
     if (!isScrolling) {
@@ -29,15 +39,16 @@ export const GroupChatPage = ({navigation, route}) => {
   const handleLayout = () => {
     flatListRef.current.scrollToEnd({animated: true});
   };
-  const currentUser = firebase.auth().currentUser;
-
-  console.log('chatId', chatId);
-
   useEffect(() => {
     const conversationRef = db.collection('chatGroups').doc(chatId);
+
     const unsubscribe = conversationRef.onSnapshot(
       snapshot => {
         const conversationData = snapshot.data();
+        setIsGroupOwner(conversationData.groupOwner === currentUser.uid);
+        setIsUserGroupAdmin(conversationData.admins.includes(currentUser.uid));
+
+        setChatInfo(conversationData);
         const messages = conversationData.messages || [];
         setMessages(messages);
       },
@@ -45,13 +56,81 @@ export const GroupChatPage = ({navigation, route}) => {
         console.error('Error fetching chat messages:', error);
       },
     );
-    return unsubscribe;
+
+    return () => {
+      unsubscribe();
+    };
   }, [chatId]);
 
+  const handleLeaveGroup = async () => {
+    try {
+      if (isUserGroupAdmin) {
+        const groupRef = db.collection('chatGroups').doc(chatId);
+        await groupRef.update({
+          participants: firestore.FieldValue.arrayRemove(currentUser.uid),
+          admins: firestore.FieldValue.arrayRemove(currentUser),
+        });
+      } else {
+        const groupRef = db.collection('chatGroups').doc(chatId);
+        await groupRef.update({
+          participants: firestore.FieldValue.arrayRemove(user.uid),
+        });
+      }
+      setIsModalVisible(false);
+      navigation.navigate('MenuPage', {user: currentUser});
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error.message,
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    try {
+      const groupRef = db.collection('chatGroups').doc(chatId);
+      await groupRef.delete();
+      setIsModalVisible(false);
+      navigation.navigate('MenuPage', {user: currentUser});
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error.message,
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
+    }
+  };
+
+  const toggleOptions = () => {
+    if (
+      currentUser.uid === chatInfo.groupOwner ||
+      chatInfo?.groupAdmins.includes(currentUser.uid)
+    ) {
+      setShowOptions(!showOptions);
+    }
+  };
+
   const renderMessage = ({item}) => {
-    const {senderName, sendTime, content} = item;
+    const {senderName, sendTime, content, sender} = item;
     return (
-      <ChatMessage sender={senderName} time={sendTime} message={content} />
+      <ChatMessage
+        sender={senderName}
+        senderId={sender}
+        time={sendTime}
+        message={content}
+        currentUser={currentUser.uid}
+      />
     );
   };
 
@@ -80,29 +159,53 @@ export const GroupChatPage = ({navigation, route}) => {
     }
   };
 
+  const getGroupParticipants = async groupId => {
+    const userDocRef = firestore().collection('chatGroups').doc(groupId);
+    const userDoc = await userDocRef.get();
+    const participants = userDoc.get('participants') || [];
+
+    const chunkedParticipants = chunkArray(participants, 10);
+    const participantSnapshots = [];
+
+    for (const chunk of chunkedParticipants) {
+      const chunkSnapshots = await firestore()
+        .collection('users')
+        .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+        .get();
+      participantSnapshots.push(...chunkSnapshots.docs);
+    }
+
+    const userFriendsNames = participantSnapshots.map(doc => ({
+      id: doc.id,
+      username: doc.data().username,
+    }));
+
+    return userFriendsNames;
+  };
+
+  function chunkArray(array, chunkSize) {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+  }
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingVertical: 10,
-          paddingHorizontal: 15,
-        }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('MenuPage', {user: currentUser})}>
           <Text style={{fontSize: 18}}>{'< '}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{flex: 1}}
-          onPress={() => console.log('Clicked group name')}>
-          <Text style={{fontSize: 18, fontWeight: 'bold', textAlign: 'center'}}>
-            Group Name
-          </Text>
+          onPress={() => setIsModalVisible(true)}>
+          <Text style={styles.headerTitle}>{chatInfo.name}</Text>
         </TouchableOpacity>
       </View>
       {messages && messages.length === 0 ? (
-        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-          <Text>No messages yet</Text>
+        <View style={styles.noMessagesContainer}>
+          <Text style={styles.noMessagesText}>No messages yet</Text>
         </View>
       ) : (
         <FlatList
@@ -114,29 +217,117 @@ export const GroupChatPage = ({navigation, route}) => {
           onLayout={handleLayout}
         />
       )}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginHorizontal: 10,
-        }}>
+      <View style={styles.footer}>
         <TextInput
-          style={{
-            flex: 1,
-            borderWidth: 1,
-            borderRadius: 5,
-            paddingHorizontal: 10,
-          }}
+          style={styles.input}
           onChangeText={text => setNewMessage(text)}
           placeholder="Type a message"
           value={newMessage}
         />
-        <Text
-          style={{marginLeft: 10, color: 'blue'}}
-          onPress={handleSendMessage}>
-          Send
-        </Text>
+        <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
       </View>
+      <Modal visible={isModalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>{chatInfo.name}</Text>
+          <View style={{flex: 1, justifyContent: 'space-between'}}>
+            <FriendsList
+              navigation={navigation}
+              getUserListData={async () => await getGroupParticipants(chatId)}
+              isGroupList={true}
+              groupInfo={chatInfo}
+            />
+            {isGroupOwner ? (
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={handleDeleteGroup}>
+                <Text style={styles.deleteButtonText}>Delete Group</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.leaveButton}
+                onPress={handleLeaveGroup}>
+                <Text style={styles.leaveButtonText}>Leave Group</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setIsModalVisible(false)}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  noMessagesContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noMessagesText: {
+    fontSize: 18,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  sendButton: {
+    marginLeft: 10,
+    backgroundColor: 'blue',
+    borderRadius: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  sendButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  cancelButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#f44336',
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});

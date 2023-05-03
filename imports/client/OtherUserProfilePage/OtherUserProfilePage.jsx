@@ -10,39 +10,34 @@ const db = firestore();
 const OtherUserProfilePage = ({route, navigation}) => {
   const {result} = route.params;
   const {username, id} = result;
+  const currentUser = firebase.auth().currentUser;
 
   const [isFriend, setIsFriend] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  useEffect(async () => {
-    const currentUser = firebase.auth().currentUser;
-    const userDocRef = db.collection('users').doc(currentUser.uid);
-    const userDoc = await userDocRef.get();
-    const blockedUsers = userDoc.get('blockedUsers') || [];
-    const blockedUserIndex = blockedUsers.indexOf(String(id));
+  useEffect(() => {
+    const fetchData = async () => {
+      const userDocRef = db.collection('users').doc(currentUser.uid);
+      const userDoc = await userDocRef.get();
+      const blockedUsers = userDoc.get('blockedUsers') || [];
+      const blockedUserIndex = blockedUsers.indexOf(String(id));
 
-    const friends = userDoc.get('friends') || [];
-    const friendIndex = friends.indexOf(String(id));
+      const friends = userDoc.get('friends') || [];
+      const friendIndex = friends.indexOf(String(id));
 
-    console.log(friends);
-    console.log(blockedUsers);
+      if (blockedUserIndex >= 0) {
+        // Remove the user from the blocked users list
+        setIsBlocked(true);
+      }
 
-    if (blockedUserIndex >= 0) {
-      // Remove the user from the blocked users list
-      setIsBlocked(true);
-    } else {
-      // Add the user to the blocked users list
-      setIsBlocked(false);
-    }
+      if (friendIndex >= 0) {
+        // Remove the friend if they're already in the list
+        setIsFriend(true);
+      }
+    };
 
-    if (friendIndex >= 0) {
-      // Remove the friend if they're already in the list
-      setIsFriend(true);
-    } else {
-      // Add the friend if they're not already in the list
-      setIsFriend(false);
-    }
+    fetchData();
   }, []);
 
   const handleBlock = async () => {
@@ -134,44 +129,58 @@ const OtherUserProfilePage = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Button
-          onPress={() => navigation.goBack()}
-          title="< Back"
-          color="#fff"
-        />
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('MenuPage', {userId: currentUser.uid})
+          }>
+          <Text style={styles.backButton}>{'<'}</Text>
+        </TouchableOpacity>
         <Text style={styles.title}>{username}</Text>
-        <View style={{width: 80}}></View>
+        <View style={styles.emptyView} />
       </View>
       <View style={styles.content}>
-        {isFriend ? (
-          <Button
-            title="Remove Friend"
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
             onPress={() => handleAddFriend()}
-            color="#f00"
-          />
-        ) : (
-          <Button
-            title="Add Friend"
-            onPress={() => handleAddFriend()}
-            color="#0f0"
-          />
-        )}
-        {isBlocked ? (
-          <Button title="Unblock" onPress={() => handleBlock()} color="#0f0" />
-        ) : (
-          <Button title="Block" onPress={() => handleBlock()} color="#f00" />
-        )}
-        {isBlocked ? (
-          <Button
-            title="Chat"
+            style={[
+              styles.button,
+              isFriend ? styles.removeFriendButton : styles.addFriendButton,
+            ]}>
+            <Text style={styles.buttonText}>
+              {isFriend ? 'Remove Friend' : 'Add Friend'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => handleBlock()}
+            style={[
+              styles.button,
+              isBlocked ? styles.unblockButton : styles.blockButton,
+            ]}>
+            <Text style={styles.buttonText}>
+              {isBlocked ? 'Unblock' : 'Block'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
             onPress={() => handleChat()}
-            disabled={true}
-            color="#999"
-          />
-        ) : (
-          <Button title="Chat" onPress={() => handleChat()} color="#00f" />
-        )}
-        <Button title="Report" onPress={() => handleReport()} color="#f00" />
+            disabled={isBlocked}
+            style={[
+              styles.button,
+              isBlocked ? styles.disabledButton : styles.chatButton,
+            ]}>
+            <Text style={styles.buttonText}>Chat</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => handleReport()}
+            style={styles.reportButton}>
+            <Text style={styles.buttonText}>Report</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -180,26 +189,70 @@ const OtherUserProfilePage = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F4F4F4',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#00f',
+    backgroundColor: '#007AFF',
     height: 50,
     paddingHorizontal: 10,
   },
+  backButton: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   title: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
   },
+  emptyView: {
+    width: 40,
+  },
   content: {
     flex: 1,
+    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+  },
+  buttonContainer: {
+    marginVertical: 10,
+    width: '100%',
+  },
+  button: {
+    height: 50,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addFriendButton: {
+    backgroundColor: '#007AFF',
+  },
+  removeFriendButton: {
+    backgroundColor: '#FF3B30',
+  },
+  blockButton: {
+    backgroundColor: '#FF3B30',
+  },
+  unblockButton: {
+    backgroundColor: '#4CD964',
+  },
+  chatButton: {
+    backgroundColor: '#007AFF',
+  },
+  disabledButton: {
+    backgroundColor: '#B2B2B2',
+  },
+  reportButton: {
+    backgroundColor: '#FF3B30',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 export default OtherUserProfilePage;
