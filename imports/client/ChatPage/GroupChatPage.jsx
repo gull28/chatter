@@ -48,6 +48,7 @@ export const GroupChatPage = ({navigation, route}) => {
         setIsGroupOwner(conversationData.groupOwner === currentUser.uid);
         setIsUserGroupAdmin(conversationData.admins.includes(currentUser.uid));
 
+        conversationData.id = chatId;
         setChatInfo(conversationData);
         const messages = conversationData.messages || [];
         setMessages(messages);

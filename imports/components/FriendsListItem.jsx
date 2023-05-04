@@ -40,48 +40,65 @@ const FriendListItem = ({
   };
 
   // need to test this
-  const handleBan = () => {
+  const handleBan = (chatGroupId, friendId) => {
     const userId = friendId; // user to be banned
-
+    const chatGroupsRef = firestore().collection('chatGroups').doc(chatGroupId);
+    console.log('grupasinfo', groupInfo);
     // Check if current user is an admin
     // Remove all messages that contain the banned user's id
     // Remove the banned user from the admins and participants arrays
-    const chatGroupsRef = firestore().collection('chatGroups');
+    chatGroupsRef
+      .get()
+      .then(doc => {
+        if (!doc.exists) {
+          console.log(`Chat group with id ${chatGroupId} does not exist`);
+          return;
+        }
 
-    chatGroupsRef.get().then(querySnapshot => {
-      const batch = firestore().batch();
-
-      querySnapshot.forEach(doc => {
         const data = doc.data();
         const admins = data.admins || [];
         const participants = data.participants || [];
 
+        const batch = firestore().batch();
+
         if (admins.includes(userId)) {
-          batch.update(doc.ref, {
+          batch.update(chatGroupsRef, {
             admins: firestore.FieldValue.arrayRemove(userId),
           });
         }
 
         if (participants.includes(userId)) {
-          batch.update(doc.ref, {
+          batch.update(chatGroupsRef, {
             participants: firestore.FieldValue.arrayRemove(userId),
           });
         }
 
-        batch.update(doc.ref, {
+        batch.update(chatGroupsRef, {
           messages: firestore.FieldValue.arrayRemove(
             ...data.messages.filter(message => message.sender === userId),
           ),
         });
+
+        batch
+          .commit()
+          .then(() => {
+            navigation.navigate('MenuPage', {user: currentUser});
+          })
+          .catch(error => {
+            console.error(
+              `Error banning user with id ${userId} from chat group ${chatGroupId}: ${error}`,
+            );
+          });
+      })
+      .catch(error => {
+        console.error(
+          `Error retrieving chat group with id ${chatGroupId}: ${error}`,
+        );
       });
-
-      batch.commit();
-    });
   };
-
   // need to fix this logic
   const handlePress = () => {
-    if (isUserAdmin(currentUser) && isUserOwner(currentUser)) {
+    if (isGroupList && (isUserAdmin(currentUser) || isUserOwner(currentUser))) {
       if (currentUser !== friendId && !isUserOwner(friendId)) {
         onPress(friendId);
       }
@@ -137,7 +154,10 @@ const FriendListItem = ({
         <View style={styles.modalContainer}>
           <Button title="Close" onPress={handleBanModalClose} />
           <Text>Ban User</Text>
-          <Button title="Ban user" onPress={handleBan} />
+          <Button
+            title="Ban user"
+            onPress={() => handleBan(groupInfo.id, friendId)}
+          />
         </View>
       </Modal>
     </>
