@@ -9,6 +9,7 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
+import auth from '@react-native-firebase/auth';
 
 const db = firestore();
 
@@ -44,6 +45,15 @@ export const ProfilePage = ({navigation, route}) => {
 
     getUserData();
   }, []);
+
+  const handleUserLogout = async () => {
+    try {
+      await auth().signOut();
+      navigation.navigate('LoginPage');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleUsernameChange = username => {
     setUsername(username);
@@ -148,7 +158,7 @@ export const ProfilePage = ({navigation, route}) => {
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email:</Text>
-        <Text>{user._user.email}</Text>
+        <Text>{user.email}</Text>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Username:</Text>
@@ -188,6 +198,11 @@ export const ProfilePage = ({navigation, route}) => {
         style={styles.badButton}
         onPress={() => navigation.navigate('DeleteAccountPage')}>
         <Text style={styles.exitButtonText}>Delete account</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.badButton}
+        onPress={() => handleUserLogout()}>
+        <Text style={styles.exitButtonText}>Logout</Text>
       </TouchableOpacity>
     </View>
   );

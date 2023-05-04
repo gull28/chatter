@@ -21,7 +21,7 @@ export const FriendsList = ({
   const currentUser = firebase.auth().currentUser.uid;
   const [friends, setFriends] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showOptions, setShowOptions] = useState(false);
+  const [selectedFriendId, setSelectedFriendId] = useState(null);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -32,6 +32,10 @@ export const FriendsList = ({
     };
     fetchFriends();
   }, []);
+
+  const handleFriendPress = friendId => {
+    setSelectedFriendId(friendId);
+  };
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -46,35 +50,23 @@ export const FriendsList = ({
   }
 
   return (
-    <>
-      <FlatList
-        style={styles.flatList}
-        data={friends}
-        renderItem={({item}) => (
-          <FriendListItem
-            friendId={item.id}
-            friendName={item.username}
-            groupInfo={groupInfo}
-            isOptionShown={showOptions}
-            onPress={() => {
-              if (isGroupList) {
-                if (
-                  currentUser === groupInfo?.groupOwner ||
-                  groupInfo?.admins.includes(currentUser)
-                ) {
-                  setShowOptions(!showOptions);
-                } else {
-                  navigation.navigate('OtherUserProfilePage', {result: item});
-                }
-              } else {
-                navigation.navigate('OtherUserProfilePage', {result: item});
-              }
-            }}
-          />
-        )}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    </>
+    <FlatList
+      style={styles.flatList}
+      data={friends}
+      renderItem={({item}) => (
+        <FriendListItem
+          navigation={navigation}
+          friendId={item.id}
+          friendName={item.username}
+          friendData={item}
+          isGroupList={isGroupList}
+          groupInfo={groupInfo}
+          isSelected={item.id === selectedFriendId}
+          onPress={handleFriendPress}
+        />
+      )}
+      keyExtractor={(item, index) => index.toString()}
+    />
   );
 };
 

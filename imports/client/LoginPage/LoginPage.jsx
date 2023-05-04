@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import {auth} from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 export const LoginPage = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -15,8 +15,8 @@ export const LoginPage = ({navigation}) => {
 
   const handleLogin = () => {
     auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {
+      .signInWithEmailAndPassword(email, password)
+      .then(userCred => {
         Toast.show({
           type: 'success',
           text1: 'Success',
@@ -26,34 +26,42 @@ export const LoginPage = ({navigation}) => {
           topOffset: 30,
           bottomOffset: 40,
         });
-        navigation.navigation('MenuPage');
+        navigation.navigate('MenuPage', {user: userCred});
       })
       .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'E-mail address already in use',
-            visibilityTime: 3000,
-            autoHide: true,
-            topOffset: 30,
-            bottomOffset: 40,
-          });
-        }
-
         if (error.code === 'auth/invalid-email') {
           Toast.show({
             type: 'error',
             text1: 'Error',
-            text2: 'Invalid e-mail address',
+            text2: 'Invalid email address',
             visibilityTime: 3000,
             autoHide: true,
             topOffset: 30,
             bottomOffset: 40,
           });
+        } else if (error.code === 'auth/user-not-found') {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'User not found',
+            visibilityTime: 3000,
+            autoHide: true,
+            topOffset: 30,
+            bottomOffset: 40,
+          });
+        } else if (error.code === 'auth/wrong-password') {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Wrong password',
+            visibilityTime: 3000,
+            autoHide: true,
+            topOffset: 30,
+            bottomOffset: 40,
+          });
+        } else {
+          console.error(error);
         }
-
-        console.error(error);
       });
   };
 
