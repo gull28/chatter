@@ -26,7 +26,7 @@ export const LoginPage = ({navigation}) => {
           topOffset: 30,
           bottomOffset: 40,
         });
-        navigation.navigate('MenuPage', {user: userCred});
+        navigation.navigate('MenuPage');
       })
       .catch(error => {
         if (error.code === 'auth/invalid-email') {

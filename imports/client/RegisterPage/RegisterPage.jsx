@@ -31,7 +31,7 @@ export const RegisterPage = ({navigation}) => {
         friends: [],
         email: email,
       });
-      navigation.navigate('MenuPage', {user});
+      navigation.navigate('MenuPage');
     } catch (error) {
       console.log(error);
     }

@@ -110,6 +110,7 @@ const OtherUserProfilePage = ({route, navigation}) => {
     await newConversationRef.set({
       participants: [currentUserUid, otherUserUid],
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      messages: [],
     });
 
     return newConversationId;
@@ -129,10 +130,7 @@ const OtherUserProfilePage = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('MenuPage', {userId: currentUser.uid})
-          }>
+        <TouchableOpacity onPress={() => navigation.navigate('MenuPage')}>
           <Text style={styles.backButton}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{username}</Text>

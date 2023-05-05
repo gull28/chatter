@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import auth, {firebase} from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
 import ChatMessage from '../../components/ChatMessage';
 import {FriendsList} from '../../components/FriendsList';
 
@@ -78,7 +78,7 @@ export const GroupChatPage = ({navigation, route}) => {
         });
       }
       setIsModalVisible(false);
-      navigation.navigate('MenuPage', {user: currentUser});
+      navigation.navigate('MenuPage');
     } catch (error) {
       console.log(error);
       Toast.show({
@@ -98,7 +98,7 @@ export const GroupChatPage = ({navigation, route}) => {
       const groupRef = db.collection('chatGroups').doc(chatId);
       await groupRef.delete();
       setIsModalVisible(false);
-      navigation.navigate('MenuPage', {user: currentUser});
+      navigation.navigate('MenuPage');
     } catch (error) {
       console.log(error);
       Toast.show({
@@ -194,8 +194,7 @@ export const GroupChatPage = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('MenuPage', {user: currentUser})}>
+        <TouchableOpacity onPress={() => navigation.navigate('MenuPage')}>
           <Text style={{fontSize: 18}}>{'< '}</Text>
         </TouchableOpacity>
         <TouchableOpacity

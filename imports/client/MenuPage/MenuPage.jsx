@@ -36,8 +36,6 @@ export const MenuPage = ({navigation, route}) => {
   const [selectedMenuTab, setSelectedMenuTab] = useState(0);
   const [groupDescription, setGroupDescription] = useState('');
 
-  const {user} = route.params;
-
   const tabs = [{label: 'Groups'}, {label: 'Users'}];
 
   const menuTabs = [{label: 'Groups'}, {label: 'Friends'}];
@@ -50,6 +48,7 @@ export const MenuPage = ({navigation, route}) => {
         .collection('chatGroups')
         .where('name', '>=', searchQuery)
         .where('name', '<=', searchQuery + '\uf8ff')
+        .where('accessibility', '==', true)
         .get();
 
       const groups = snapshot.docs.map(doc => ({
@@ -96,10 +95,6 @@ export const MenuPage = ({navigation, route}) => {
     setGroupName(groupName);
   };
 
-  const handleAccessibilityChange = accessibility => {
-    setAccessible(accessibility);
-  };
-
   const handleRegion = region => {
     setRegion(region);
   };
@@ -111,17 +106,18 @@ export const MenuPage = ({navigation, route}) => {
   const handleCreateGroup = async (count, name, accessibility) => {
     await db
       .collection('chatGroups')
-      .doc(user.uid)
+      .doc()
       .set({
         count,
         name,
-        groupOwner: user.uid,
-        accessibility,
+        groupOwner: currentUser,
+        accessibility: accessibility.value,
         admins: [],
         bannedUsers: [],
+        messages: [],
         region,
         groupDescription,
-        participants: [user.uid],
+        participants: [currentUser],
       })
       .then(() => {
         setIsModalVisible(false);
@@ -147,7 +143,6 @@ export const MenuPage = ({navigation, route}) => {
   };
 
   const handleResultPress = async result => {
-    console.log(await isUserInGroup(currentUser, result.id));
     if (await isUserInGroup(currentUser, result.id)) {
       navigation.navigate('GroupChatPage', {chatId: result.id});
     } else {
@@ -206,7 +201,7 @@ export const MenuPage = ({navigation, route}) => {
         </View>
         <TouchableOpacity
           style={styles.profileButton}
-          onPress={() => handleProfile(user)}>
+          onPress={() => handleProfile(currentUser)}>
           <Text style={styles.profileButtonText}>Profile</Text>
         </TouchableOpacity>
       </View>

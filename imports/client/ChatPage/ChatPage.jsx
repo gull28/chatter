@@ -1,7 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {FlatList, View, Text, SafeAreaView, TextInput} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  FlatList,
+  View,
+  Text,
+  SafeAreaView,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
+import ChatMessage from '../../components/ChatMessage';
 
 const db = firestore();
 
@@ -9,7 +18,12 @@ export const ChatPage = ({navigation, route}) => {
   const {chatId, chatType, participantId} = route.params;
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [participantInfo, setParticipantInfo] = useState({});
+  const [currentUserData, setCurrentUserData] = useState({});
+
   const currentUser = firebase.auth().currentUser.uid;
+  const flatListRef = useRef(null);
 
   useEffect(() => {
     const conversationRef = db.collection('conversations').doc(chatId);
@@ -17,14 +31,42 @@ export const ChatPage = ({navigation, route}) => {
     conversationRef.get().then(doc => {
       if (doc.exists) {
         const conversation = doc.data();
-        const messages = conversation.messages;
+        const messages = conversation.messages || [];
         setMessages(messages);
       }
     });
   }, [chatId]);
 
+  useEffect(() => {
+    const getUserData = async () => {
+      const userDocRef = db.collection('users').doc(participantId);
+      const userDataRefDoc = await userDocRef.get();
+      const userData = userDataRefDoc.data();
+      setParticipantInfo(userData);
+    };
+
+    const getCurrentUserData = async () => {
+      const userDocRef = db.collection('users').doc(currentUser);
+      const userDataRefDoc = await userDocRef.get();
+      const userData = userDataRefDoc.data();
+      setCurrentUserData(userData);
+    };
+
+    getCurrentUserData();
+    getUserData();
+  }, [participantId]);
+
+  const handleContentSizeChange = () => {
+    if (messages.length > 0 && !isScrolling) {
+      flatListRef.current.scrollToEnd({animated: true});
+    }
+  };
+
+  const handleLayout = () => {
+    flatListRef.current.scrollToEnd({animated: true});
+  };
+
   const handleRealtimeUpdates = snapshot => {
-    console.log('Realtime update received:', snapshot);
     const updatedConversation = snapshot.data();
     const updatedMessages = updatedConversation.messages;
     setMessages(updatedMessages);
@@ -33,17 +75,11 @@ export const ChatPage = ({navigation, route}) => {
   // Add a listener to the conversation document to listen for changes
   useEffect(() => {
     const conversationRef = db.collection('conversations').doc(chatId);
-    conversationRef.onSnapshot(handleRealtimeUpdates);
+    const unsubscribe = conversationRef.onSnapshot(handleRealtimeUpdates);
 
     // Clean up the listener when the component unmounts
-    return () => conversationRef.off('snapshot', handleRealtimeUpdates);
+    return () => unsubscribe();
   }, [chatId]);
-
-  const renderMessage = ({item}) => (
-    <View style={{marginVertical: 10}}>
-      <Text>{item.content}</Text>
-    </View>
-  );
 
   useEffect(() => {
     const conversationRef = db.collection('conversations').doc(chatId);
@@ -59,6 +95,23 @@ export const ChatPage = ({navigation, route}) => {
     return () => conversationRef.onSnapshot(() => {});
   }, [chatId]);
 
+  const renderMessage = ({item}) => {
+    const {senderName, sendTime, content, sender} = item;
+    return (
+      <ChatMessage
+        sender={senderName}
+        senderId={sender}
+        time={sendTime}
+        message={content}
+        currentUser={currentUser.uid}
+      />
+    );
+  };
+
+  useEffect(() => {
+    console.log(navigation);
+  }, [navigation]);
+
   const handleSendMessage = () => {
     if (newMessage.length === 0) {
       return; // Don't send empty messages
@@ -70,6 +123,7 @@ export const ChatPage = ({navigation, route}) => {
       content: newMessage,
       sendTime: new Date().toISOString(),
       sender: currentUser,
+      senderName: currentUserData.username,
     };
 
     conversationRef
@@ -83,18 +137,34 @@ export const ChatPage = ({navigation, route}) => {
         console.error('Error adding new message: ', error);
       });
   };
-
   return (
     <SafeAreaView style={{flex: 1}}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('MenuPage')}>
+          <Text style={{fontSize: 18}}>{' < '}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{flex: 1}}
+          onPress={() =>
+            navigation.navigate('OtherUserProfilePage', {
+              result: participantInfo,
+            })
+          }>
+          <Text style={styles.headerTitle}>{participantInfo.username}</Text>
+        </TouchableOpacity>
+      </View>
       {messages && messages.length === 0 ? (
         <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
           <Text>No messages yet</Text>
         </View>
       ) : (
         <FlatList
+          ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
           keyExtractor={item => item.id}
+          onContentSizeChange={handleContentSizeChange}
+          onLayout={handleLayout}
         />
       )}
       <View
@@ -123,3 +193,17 @@ export const ChatPage = ({navigation, route}) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});

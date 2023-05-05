@@ -10,6 +10,8 @@ import {
 import auth, {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
+const db = firestore();
+
 const FriendListItem = ({
   navigation,
   friendId,
@@ -22,7 +24,7 @@ const FriendListItem = ({
 }) => {
   const currentUser = firebase.auth().currentUser.uid;
   const [isBanModalVisible, setIsBanModalVisible] = useState(false);
-  const [isReportModalVisible, setIsReportModalVisible] = useState(false);
+  const [isUserAdministrator, setIsUserAdministrator] = useState(false);
 
   const isUserAdmin = userId => {
     return groupInfo.admins.includes(userId);
@@ -35,14 +37,50 @@ const FriendListItem = ({
     setIsBanModalVisible(true);
   };
 
-  const handleUserReport = () => {
-    setIsReportModalVisible(true);
+  useEffect(() => {
+    if (isGroupList) {
+      const handleFriend = async () => {
+        const groupRef = await db
+          .collection('chatGroups')
+          .doc(groupInfo.id)
+          .get();
+        const admins = groupRef.data().admins;
+        setIsUserAdministrator(admins.includes(friendId));
+      };
+      handleFriend();
+    }
+  }, [groupInfo]);
+
+  const handleAddAsAdmin = async userId => {
+    try {
+      if (isUserAdministrator) {
+        // User is already an admin, so remove them from the array
+        await db
+          .collection('chatGroups')
+          .doc(groupInfo.id)
+          .update({
+            admins: firebase.firestore.FieldValue.arrayRemove(userId),
+          });
+        setIsUserAdministrator(false);
+      } else {
+        // User is not an admin, so add them to the array
+        await db
+          .collection('chatGroups')
+          .doc(groupInfo.id)
+          .update({
+            admins: firebase.firestore.FieldValue.arrayUnion(userId),
+          });
+        setIsUserAdministrator(true);
+      }
+    } catch (error) {
+      console.error('Error updating admins:', error);
+    }
   };
 
   // need to test this
   const handleBan = (chatGroupId, friendId) => {
     const userId = friendId; // user to be banned
-    const chatGroupsRef = firestore().collection('chatGroups').doc(chatGroupId);
+    const chatGroupsRef = db.collection('chatGroups').doc(chatGroupId);
     console.log('grupasinfo', groupInfo);
     // Check if current user is an admin
     // Remove all messages that contain the banned user's id
@@ -82,7 +120,7 @@ const FriendListItem = ({
         batch
           .commit()
           .then(() => {
-            navigation.navigate('MenuPage', {user: currentUser});
+            navigation.navigate('MenuPage');
           })
           .catch(error => {
             console.error(
@@ -111,24 +149,31 @@ const FriendListItem = ({
     setIsBanModalVisible(false);
   };
 
-  const handleReportModalClose = () => {
-    setIsReportModalVisible(false);
-  };
-
   return (
     <>
       <TouchableOpacity
         style={[styles.container, isSelected && styles.selectedContainer]}
         onPress={handlePress}>
         <Text style={styles.friendName}>{friendName}</Text>
+        {isUserAdministrator && isGroupList && (
+          <Text style={styles.friendName}>Admin</Text>
+        )}
       </TouchableOpacity>
       {isSelected && isGroupList && (
         <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={styles.option}
-            onPress={() => handleUserReport()}>
-            <Text style={styles.optionText}>Report</Text>
-          </TouchableOpacity>
+          {isUserAdministrator ? (
+            <TouchableOpacity
+              style={styles.option}
+              onPress={async () => await handleAddAsAdmin(friendId)}>
+              <Text style={styles.optionText}>Remove admin</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.option}
+              onPress={async () => await handleAddAsAdmin(friendId)}>
+              <Text style={styles.optionText}>Add admin</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={styles.option}
             onPress={() => handleUserBan()}>
@@ -143,13 +188,6 @@ const FriendListItem = ({
           </TouchableOpacity>
         </View>
       )}
-      <Modal visible={isReportModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Button title="Close" onPress={handleReportModalClose} />
-          <Text>Report User {friendName}</Text>
-          <Button title="Ban" onPress={handleReportModalClose} />
-        </View>
-      </Modal>
       <Modal visible={isBanModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <Button title="Close" onPress={handleBanModalClose} />

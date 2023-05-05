@@ -18,6 +18,7 @@ export const ProfilePage = ({navigation, route}) => {
 
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
 
   const [newPassword, setNewPassword] = useState('');
   const [oldPassword, setOldPassword] = useState('');
@@ -37,8 +38,9 @@ export const ProfilePage = ({navigation, route}) => {
 
   useEffect(() => {
     const getUserData = async () => {
-      const {username, phoneNumber} = await userData();
+      const {username, phoneNumber, email} = await userData();
 
+      setEmail(email);
       setUsername(username);
       setPhoneNumber(phoneNumber);
     };
@@ -81,7 +83,7 @@ export const ProfilePage = ({navigation, route}) => {
       try {
         const user = firebase.auth().currentUser;
         const credential = firebase.auth.EmailAuthProvider.credential(
-          user.email,
+          email,
           currentPassword,
         );
         await user.reauthenticateWithCredential(credential);
@@ -98,7 +100,7 @@ export const ProfilePage = ({navigation, route}) => {
           bottomOffset: 40,
         });
 
-        navigation.navigate('MenuPage', {user});
+        navigation.navigate('MenuPage');
         console.log('Password successfully updated!');
       } catch (error) {
         Toast.show({
@@ -158,7 +160,7 @@ export const ProfilePage = ({navigation, route}) => {
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email:</Text>
-        <Text>{user.email}</Text>
+        <Text>{email}</Text>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Username:</Text>
