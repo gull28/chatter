@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+const moment = require('moment');
 
 const ChatMessage = ({sender, time, message, currentUser, senderId}) => {
   const [showOptions, setShowOptions] = useState(false);
@@ -9,6 +10,8 @@ const ChatMessage = ({sender, time, message, currentUser, senderId}) => {
       setShowOptions(!showOptions);
     }
   };
+
+  const sendTime = moment(time).fromNow();
 
   const messageStyle = {
     alignSelf: currentUser === senderId ? 'flex-end' : 'flex-start',
@@ -27,7 +30,7 @@ const ChatMessage = ({sender, time, message, currentUser, senderId}) => {
         <View style={[styles.messageContainer, messageStyle]}>
           <Text style={[styles.sender, senderTextStyle]}>{sender}</Text>
           <Text style={styles.message}>{message}</Text>
-          <Text style={styles.time}>{time}</Text>
+          <Text style={styles.time}>{sendTime}</Text>
         </View>
       </TouchableOpacity>
       {showOptions && (

@@ -86,7 +86,7 @@ export const ChatPage = ({navigation, route}) => {
     conversationRef.onSnapshot(doc => {
       if (doc.exists) {
         const conversationData = doc.data();
-        const messages = conversationData.messages;
+        const messages = conversationData.messages || [];
         setMessages(messages);
       }
     });

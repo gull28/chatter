@@ -25,7 +25,7 @@ export const ProfilePage = ({navigation, route}) => {
 
   const userData = async () => {
     try {
-      const userDoc = await db.collection('users').doc(user.uid).get();
+      const userDoc = await db.collection('users').doc(user).get();
       if (userDoc.exists) {
         return userDoc.data();
       } else {
@@ -137,7 +137,7 @@ export const ProfilePage = ({navigation, route}) => {
       return;
     } else {
       try {
-        await db.collection('users').doc(user.uid).update({
+        await db.collection('users').doc(user).update({
           username: username,
           phoneNumber: phoneNumber,
         });

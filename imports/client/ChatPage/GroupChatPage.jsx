@@ -13,6 +13,8 @@ import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
 import ChatMessage from '../../components/ChatMessage';
 import {FriendsList} from '../../components/FriendsList';
+import Dropdown from '../../components/Dropdown';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const db = firestore();
 
@@ -21,14 +23,25 @@ export const GroupChatPage = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [chatInfo, setChatInfo] = useState({});
   const [showOptions, setShowOptions] = useState(false);
   const [isGroupOwner, setIsGroupOwner] = useState(false);
   const [isUserGroupAdmin, setIsUserGroupAdmin] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [usersCount, setUsersCount] = useState('');
+  const [accessible, setAccessible] = useState(false);
+  const [groupDescription, setGroupDescription] = useState('');
+
   const flatListRef = useRef(null);
 
   const currentUser = firebase.auth().currentUser;
+
+  const items = [
+    {label: 'Public', value: true},
+    {label: 'Private', value: false},
+  ];
 
   const handleContentSizeChange = () => {
     if (!isScrolling) {
@@ -49,6 +62,14 @@ export const GroupChatPage = ({navigation, route}) => {
         setIsUserGroupAdmin(conversationData.admins.includes(currentUser.uid));
 
         conversationData.id = chatId;
+        setGroupName(conversationData.name);
+        setUsersCount(conversationData.count);
+        if (conversationData.accessibility) {
+          setAccessible({label: 'Public', value: true});
+        } else {
+          setAccessible({label: 'Private', value: false});
+        }
+        setGroupDescription(conversationData.groupDescription);
         setChatInfo(conversationData);
         const messages = conversationData.messages || [];
         setMessages(messages);
@@ -93,12 +114,37 @@ export const GroupChatPage = ({navigation, route}) => {
     }
   };
 
+  useEffect(() => {
+    console.log(accessible);
+  }, [accessible]);
+
+  const handleEditModalClose = () => {
+    setIsEditModalVisible(false);
+    if (chatInfo.accessibility) {
+      setAccessible({label: 'Public', value: true});
+    } else {
+      setAccessible({label: 'Private', value: false});
+    }
+    setGroupDescription(chatInfo.groupDescription);
+    setGroupName(chatInfo.name);
+    setUsersCount(chatInfo.count);
+  };
+
   const handleDeleteGroup = async () => {
     try {
       const groupRef = db.collection('chatGroups').doc(chatId);
       await groupRef.delete();
       setIsModalVisible(false);
       navigation.navigate('MenuPage');
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Successfully deleted group!',
+        visibilityTime: 2000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
     } catch (error) {
       console.log(error);
       Toast.show({
@@ -113,17 +159,9 @@ export const GroupChatPage = ({navigation, route}) => {
     }
   };
 
-  const toggleOptions = () => {
-    if (
-      currentUser.uid === chatInfo.groupOwner ||
-      chatInfo?.groupAdmins.includes(currentUser.uid)
-    ) {
-      setShowOptions(!showOptions);
-    }
-  };
-
   const renderMessage = ({item}) => {
     const {senderName, sendTime, content, sender} = item;
+
     return (
       <ChatMessage
         sender={senderName}
@@ -135,6 +173,34 @@ export const GroupChatPage = ({navigation, route}) => {
     );
   };
 
+  const handleUpdateGroup = async (
+    usersCount,
+    groupName,
+    groupDescription,
+    accessibility,
+  ) => {
+    const docRef = db.collection('chatGroups').doc(chatId);
+    docRef
+      .update({
+        count: usersCount,
+        name: groupName,
+        groupDescription,
+        accessibility,
+      })
+      .then(() => {
+        navigation.navigate('MenuPage');
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Group parameters successfully updated!',
+          visibilityTime: 4000,
+          autoHide: true,
+          topOffset: 30,
+          bottomOffset: 40,
+        });
+      });
+  };
+
   const handleSendMessage = async () => {
     if (newMessage.length === 0) {
       return; // Don't send empty messages
@@ -143,7 +209,6 @@ export const GroupChatPage = ({navigation, route}) => {
     const conversationRef = db.collection('chatGroups').doc(chatId);
     try {
       const message = {
-        id: Date.now().toString(),
         content: newMessage,
         sendTime: new Date().toISOString(),
         sender: currentUser.uid,
@@ -202,6 +267,13 @@ export const GroupChatPage = ({navigation, route}) => {
           onPress={() => setIsModalVisible(true)}>
           <Text style={styles.headerTitle}>{chatInfo.name}</Text>
         </TouchableOpacity>
+        {isGroupOwner && (
+          <TouchableOpacity
+            style={{flex: 1}}
+            onPress={() => setIsEditModalVisible(true)}>
+            <Text style={styles.headerTitle}>Edit group</Text>
+          </TouchableOpacity>
+        )}
       </View>
       {messages && messages.length === 0 ? (
         <View style={styles.noMessagesContainer}>
@@ -228,6 +300,53 @@ export const GroupChatPage = ({navigation, route}) => {
           <Text style={styles.sendButtonText}>Send</Text>
         </TouchableOpacity>
       </View>
+      <Modal visible={isEditModalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Create New Chat Group</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Group Name"
+            value={groupName}
+            onChangeText={text => setGroupName(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Number of Users"
+            value={usersCount}
+            keyboardType="phone-pad"
+            contextMenuHidden={true}
+            onChangeText={text => setUsersCount(text)}
+          />
+          <Dropdown
+            options={items}
+            selectedValue={accessible}
+            onValueChange={value => setAccessible(value)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Edit the description!"
+            value={groupDescription}
+            onChangeText={text => setGroupDescription(text)}
+          />
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={() =>
+              handleUpdateGroup(
+                usersCount,
+                groupName,
+                groupDescription,
+                accessible.value,
+              )
+            }>
+            <Text style={styles.createButtonText}>Create</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => handleEditModalClose()}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       <Modal visible={isModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>{chatInfo.name}</Text>
@@ -282,6 +401,10 @@ const styles = StyleSheet.create({
   },
   noMessagesText: {
     fontSize: 18,
+  },
+  createButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   footer: {
     flexDirection: 'row',
