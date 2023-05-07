@@ -152,17 +152,17 @@ export const ProfilePage = ({navigation, route}) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.exitButtonText}>X</Text>
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}>
+          <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Profile Page</Text>
       </View>
-      <View style={styles.inputContainer}>
+      <View style={styles.infoContainer}>
         <Text style={styles.label}>Email:</Text>
-        <Text>{email}</Text>
+        <Text style={styles.infoText}>{email}</Text>
       </View>
-      <View style={styles.inputContainer}>
+      <View style={styles.infoContainer}>
         <Text style={styles.label}>Username:</Text>
         <TextInput
           value={username}
@@ -171,40 +171,42 @@ export const ProfilePage = ({navigation, route}) => {
           style={styles.input}
         />
       </View>
-      <View style={styles.inputContainer}>
+      <View style={styles.infoContainer}>
         <Text style={styles.label}>Old password:</Text>
         <TextInput
           value={oldPassword}
           onChangeText={oldPassword => handleOldPasswordChange(oldPassword)}
           placeholder="Enter old password"
+          secureTextEntry={true}
           style={styles.input}
         />
       </View>
-      <View style={styles.inputContainer}>
+      <View style={styles.infoContainer}>
         <Text style={styles.label}>New password:</Text>
         <TextInput
           value={newPassword}
           onChangeText={newPassword => handleNewPasswordChange(newPassword)}
           placeholder="Enter new password"
+          secureTextEntry={true}
           style={styles.input}
         />
       </View>
       <TouchableOpacity
-        style={styles.button}
         onPress={() =>
           saveChanges(newPassword, oldPassword, username, phoneNumber)
-        }>
-        <Text style={styles.exitButtonText}>Save changes</Text>
+        }
+        style={styles.saveButton}>
+        <Text style={styles.buttonText}>Save Changes</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.badButton}
-        onPress={() => navigation.navigate('DeleteAccountPage')}>
-        <Text style={styles.exitButtonText}>Delete account</Text>
+        onPress={() => navigation.navigate('DeleteAccountPage')}
+        style={styles.deleteButton}>
+        <Text style={styles.buttonText}>Delete Account</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.badButton}
-        onPress={() => handleUserLogout()}>
-        <Text style={styles.exitButtonText}>Logout</Text>
+        onPress={() => handleUserLogout()}
+        style={styles.logoutButton}>
+        <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
   );
@@ -213,43 +215,91 @@ export const ProfilePage = ({navigation, route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-  },
-  button: {
-    backgroundColor: '#0084ff',
-    borderRadius: 5,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  badButton: {
-    backgroundColor: '#ED4337',
-    borderRadius: 5,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  exitButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     marginBottom: 20,
   },
+  backButton: {
+    backgroundColor: '#2196F3',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#fff',
+  },
   title: {
+    flex: 1,
     fontSize: 24,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
-  inputContainer: {
+  infoContainer: {
     marginBottom: 10,
   },
   label: {
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
   },
+  infoText: {
+    fontSize: 16,
+  },
   input: {
-    borderBottomWidth: 1,
-    borderColor: 'gray',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  saveButton: {
+    backgroundColor: '#2196F3',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+    position: 'absolute',
+    bottom: 120,
+    left: 20,
+    right: 20,
+  },
+  deleteButton: {
+    backgroundColor: '#ff0000',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+  },
+  logoutButton: {
+    backgroundColor: '#ccc',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+    position: 'absolute',
+    bottom: 70,
+    left: 20,
+    right: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

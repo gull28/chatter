@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Modal, View, Text, TextInput, Button, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-const ReportUserModal = ({isVisible, user, onClose}) => {
+const ReportUserModal = ({isVisible, message, user, onClose}) => {
   const [reason, setReason] = useState('');
   const [comment, setComment] = useState('');
 
@@ -18,6 +18,7 @@ const ReportUserModal = ({isVisible, user, onClose}) => {
       .collection('userReports')
       .doc(id)
       .set({
+        message,
         reason,
         comment,
       })

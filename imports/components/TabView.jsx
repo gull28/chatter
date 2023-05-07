@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, TouchableOpacity, Text} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 
 const TabView = ({tabs, initialTab, onTabChange}) => {
   const [selectedTab, setSelectedTab] = useState(initialTab || 0);
@@ -12,20 +12,26 @@ const TabView = ({tabs, initialTab, onTabChange}) => {
   };
 
   return (
-    <View style={{flexDirection: 'row'}}>
+    <View style={styles.container}>
       {tabs.map((tab, index) => (
         <TouchableOpacity
           key={index}
           onPress={() => handleTabPress(index)}
-          style={{
-            flex: 1,
-            backgroundColor: selectedTab === index ? 'gray' : 'white',
-            alignItems: 'center',
-            paddingVertical: 10,
-            borderWidth: 1,
-            borderColor: 'gray',
-          }}>
-          <Text style={{fontWeight: selectedTab === index ? 'bold' : 'normal'}}>
+          style={[
+            styles.tab,
+            {
+              backgroundColor: selectedTab === index ? '#2196F3' : 'white',
+              borderColor: selectedTab === index ? '#2196F3' : 'gray',
+            },
+          ]}>
+          <Text
+            style={[
+              styles.tabLabel,
+              {
+                color: selectedTab === index ? '#fff' : '#333',
+                fontWeight: selectedTab === index ? 'bold' : 'normal',
+              },
+            ]}>
             {tab.label}
           </Text>
         </TouchableOpacity>
@@ -33,5 +39,27 @@ const TabView = ({tabs, initialTab, onTabChange}) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    backgroundColor: '#F5FCFF',
+    borderRadius: 5,
+    overflow: 'hidden',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  tabLabel: {
+    fontSize: 16,
+  },
+});
 
 export default TabView;

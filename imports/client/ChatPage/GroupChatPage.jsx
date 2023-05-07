@@ -26,7 +26,6 @@ export const GroupChatPage = ({navigation, route}) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [chatInfo, setChatInfo] = useState({});
-  const [showOptions, setShowOptions] = useState(false);
   const [isGroupOwner, setIsGroupOwner] = useState(false);
   const [isUserGroupAdmin, setIsUserGroupAdmin] = useState(false);
   const [groupName, setGroupName] = useState('');
@@ -162,6 +161,7 @@ export const GroupChatPage = ({navigation, route}) => {
   const renderMessage = ({item}) => {
     const {senderName, sendTime, content, sender} = item;
 
+    const showThird = isUserGroupAdmin || isGroupOwner;
     return (
       <ChatMessage
         sender={senderName}
@@ -169,6 +169,10 @@ export const GroupChatPage = ({navigation, route}) => {
         time={sendTime}
         message={content}
         currentUser={currentUser.uid}
+        groupInfo={chatInfo}
+        groupMessage={true}
+        showThird={showThird}
+        navigation={navigation}
       />
     );
   };

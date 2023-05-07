@@ -104,6 +104,7 @@ export const ChatPage = ({navigation, route}) => {
         time={sendTime}
         message={content}
         currentUser={currentUser.uid}
+        navigation={navigation}
       />
     );
   };

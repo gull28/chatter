@@ -205,7 +205,7 @@ const FriendListItem = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: 100,
+    width: '100%',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -213,6 +213,8 @@ const styles = StyleSheet.create({
   },
   selectedContainer: {
     backgroundColor: 'lightblue',
+    borderWidth: 1,
+    borderColor: 'blue',
   },
   friendName: {
     fontSize: 16,
@@ -229,11 +231,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 5,
   },
+  optionText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
   modalContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
 });
-
 export default FriendListItem;

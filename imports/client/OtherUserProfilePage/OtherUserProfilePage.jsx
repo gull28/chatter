@@ -134,7 +134,7 @@ const OtherUserProfilePage = ({route, navigation}) => {
           <Text style={styles.backButton}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{username}</Text>
-        <View style={styles.emptyView} />
+        <View style={{flex: 1}} />
       </View>
       <View style={styles.content}>
         <View style={styles.buttonContainer}>
@@ -187,70 +187,56 @@ const OtherUserProfilePage = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4',
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#007AFF',
-    height: 50,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   backButton: {
-    color: '#FFFFFF',
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
+    marginRight: 10,
   },
   title: {
-    color: '#FFFFFF',
+    flex: 1,
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  emptyView: {
-    width: 40,
+    textAlign: 'center',
   },
   content: {
     flex: 1,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 30,
   },
   buttonContainer: {
-    marginVertical: 10,
-    width: '100%',
+    marginBottom: 20,
   },
   button: {
-    height: 50,
+    backgroundColor: '#007AFF',
     borderRadius: 8,
-    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     alignItems: 'center',
   },
-  addFriendButton: {
-    backgroundColor: '#007AFF',
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   removeFriendButton: {
     backgroundColor: '#FF3B30',
   },
-  blockButton: {
-    backgroundColor: '#FF3B30',
-  },
   unblockButton: {
-    backgroundColor: '#4CD964',
-  },
-  chatButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#FF3B30',
   },
   disabledButton: {
-    backgroundColor: '#B2B2B2',
+    backgroundColor: '#A7A7A7',
   },
   reportButton: {
-    backgroundColor: '#FF3B30',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+    backgroundColor: '#FF9500',
   },
 });
 export default OtherUserProfilePage;

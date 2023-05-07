@@ -292,8 +292,9 @@ export const MenuPage = ({navigation, route}) => {
             selectedItem={country => handleRegion(country)}
           />
           <TextInput
-            style={styles.input}
+            style={styles.descriptionInput}
             placeholder="Add a description about your group!"
+            multiline={true}
             value={groupDescription}
             onChangeText={text => setGroupDescription(text)}
           />
@@ -315,129 +316,159 @@ export const MenuPage = ({navigation, route}) => {
   );
 };
 
-export const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 16,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 16,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
   searchBarContainer: {
     flex: 1,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#eee',
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginRight: 16,
+    marginRight: 10,
   },
   searchBar: {
-    flex: 1,
-    fontSize: 16,
-    marginLeft: 8,
+    height: 40,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   profileButton: {
-    backgroundColor: '#0084ff',
+    backgroundColor: '#2196F3',
+    padding: 10,
     borderRadius: 5,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
   },
   profileButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontWeight: 'bold',
   },
+  searchResultsContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  input: {
+    height: 40,
+    width: '100%',
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  descriptionInput: {
+    height: 120,
+    width: '100%',
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    textAlignVertical: 'top',
+    multiline: true,
+  },
+
   newChatButton: {
     position: 'absolute',
-    bottom: 16,
-    right: 16,
-    backgroundColor: '#0084ff',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#2196F3',
     borderRadius: 30,
     width: 60,
     height: 60,
-    alignItems: 'center',
     justifyContent: 'center',
-    elevation: 3,
+    alignItems: 'center',
   },
   newChatButtonText: {
-    fontSize: 24,
+    fontSize: 30,
     color: '#fff',
+  },
+  myDropdownContainerStyle: {
+    width: '100%',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  myDropdownRowStyle: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  myDropdownCountryTextStyle: {
+    fontSize: 16,
+  },
+  mycountryNameStyle: {
+    marginLeft: 5,
   },
   modalContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    padding: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+    color: '#2196F3',
+    textAlign: 'center',
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 8,
+    backgroundColor: '#f1f1f1',
+    borderRadius: 10,
+    paddingLeft: 10,
     marginBottom: 16,
   },
   createButton: {
-    backgroundColor: '#0084ff',
+    backgroundColor: '#2196F3',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
+    position: 'absolute',
+    bottom: 70,
+    left: 20,
+    right: 20,
   },
   createButtonText: {
     color: '#fff',
+    fontWeight: 'bold',
     fontSize: 16,
   },
   cancelButton: {
     backgroundColor: '#ccc',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
     alignItems: 'center',
-    justifyContent: 'center',
+    marginBottom: 10,
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
   cancelButtonText: {
     color: '#fff',
+    fontWeight: 'bold',
     fontSize: 16,
   },
-  ContainerStyle: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 8,
-    marginBottom: 16,
-  },
-  myDropdownContainerStyle: {
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 8,
-  },
-  myDropdownRowStyle: {
-    backgroundColor: '#fff',
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-  },
-  myDropdownCountryTextStyle: {
-    fontSize: 14,
-    color: '#222',
-  },
-  mycountryNameStyle: {
-    fontSize: 14,
-    color: '#222',
-  },
-});
+};
