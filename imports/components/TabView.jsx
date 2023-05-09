@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 
-const TabView = ({tabs, initialTab, onTabChange}) => {
+export const TabView = ({tabs, initialTab, onTabChange}) => {
   const [selectedTab, setSelectedTab] = useState(initialTab || 0);
 
   const handleTabPress = index => {
@@ -61,5 +61,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default TabView;

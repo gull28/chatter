@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import Dropdown from './Dropdown';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import {Dropdown} from './Dropdown';
+import Toast from 'react-native-toast-message';
 
 const moment = require('moment');
 
 const db = firestore();
 
-const ChatMessage = ({
+export const ChatMessage = ({
   navigation,
   senderId,
   sender,
@@ -182,7 +182,7 @@ const ChatMessage = ({
       )}
       <Modal visible={isReportModalVisible} animationType="fade">
         <View style={modalStyles.modalContainer}>
-          <Text style={modalStyles.title}>Report User: {sender}</Text>
+          <Text style={modalStyles.title}>Report User: {sender} message</Text>
           <Text style={modalStyles.message}>{message}</Text>
           <Dropdown
             options={items}
@@ -318,5 +318,3 @@ const modalStyles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default ChatMessage;

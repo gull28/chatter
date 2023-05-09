@@ -1,7 +1,7 @@
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 
-const GroupListItem = ({groupName, onPress}) => {
+export const GroupListItem = ({groupName, onPress}) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text style={styles.text}>{groupName}</Text>
@@ -22,5 +22,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-export default GroupListItem;

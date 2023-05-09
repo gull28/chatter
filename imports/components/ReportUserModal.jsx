@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Modal, View, Text, TextInput, Button, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-const ReportUserModal = ({isVisible, message, user, onClose}) => {
+export const ReportUserModal = ({isVisible, message, user, onClose}) => {
   const [reason, setReason] = useState('');
   const [comment, setComment] = useState('');
 
@@ -81,5 +81,3 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
-
-export default ReportUserModal;

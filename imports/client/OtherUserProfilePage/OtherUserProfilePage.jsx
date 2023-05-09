@@ -1,20 +1,39 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import Toast from 'react-native-toast-message';
 import auth, {firebase} from '@react-native-firebase/auth';
-import ReportUserModal from '../../components/ReportUserModal';
-import {Ionicons} from '@ionic/react';
+import {BackButton} from '../../components/BackArrow';
+import {Dropdown} from '../../components/Dropdown';
 
 const db = firestore();
 
-const OtherUserProfilePage = ({route, navigation}) => {
+export const OtherUserProfilePage = ({route, navigation}) => {
   const {result} = route.params;
   const {username, id} = result;
   const currentUser = firebase.auth().currentUser;
 
+  const items = [
+    {label: '', value: ''},
+    {label: 'Profanity', value: 'profanity'},
+    {label: 'Racism or prejudice', value: 'racism'},
+    {label: 'Threats or violence', value: 'threats'},
+  ];
+
   const [isFriend, setIsFriend] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +58,12 @@ const OtherUserProfilePage = ({route, navigation}) => {
 
     fetchData();
   }, []);
+
+  const handleReportModalClose = () => {
+    setReportReason('');
+    setComment('');
+    setIsReportModalVisible(false);
+  };
 
   const handleBlock = async () => {
     const currentUser = firebase.auth().currentUser;
@@ -116,6 +141,30 @@ const OtherUserProfilePage = ({route, navigation}) => {
     return newConversationId;
   }
 
+  const sendReport = async (comment, reason) => {
+    await db
+      .collection('userReports')
+      .doc()
+      .set({
+        comment,
+        reason: reason.value,
+        open: true,
+        sendUser: currentUser.uid,
+      })
+      .then(() => {
+        handleReportModalClose();
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Successfully reported user!',
+          visibilityTime: 2000,
+          autoHide: true,
+          topOffset: 30,
+          bottomOffset: 40,
+        });
+      });
+  };
+
   const handleChat = async () => {
     const chatId = await findConversationId(
       firebase.auth().currentUser.uid,
@@ -130,56 +179,83 @@ const OtherUserProfilePage = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('MenuPage')}>
-          <Text style={styles.backButton}>{'<'}</Text>
-        </TouchableOpacity>
+        <BackButton
+          onPress={() => navigation.navigate('MenuPage')}
+          color="#2196F3"
+        />
         <Text style={styles.title}>{username}</Text>
         <View style={{flex: 1}} />
       </View>
       <View style={styles.content}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => handleAddFriend()}
-            style={[
-              styles.button,
-              isFriend ? styles.removeFriendButton : styles.addFriendButton,
-            ]}>
-            <Text style={styles.buttonText}>
-              {isFriend ? 'Remove Friend' : 'Add Friend'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => handleBlock()}
-            style={[
-              styles.button,
-              isBlocked ? styles.unblockButton : styles.blockButton,
-            ]}>
-            <Text style={styles.buttonText}>
-              {isBlocked ? 'Unblock' : 'Block'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => handleChat()}
-            disabled={isBlocked}
-            style={[
-              styles.button,
-              isBlocked ? styles.disabledButton : styles.chatButton,
-            ]}>
-            <Text style={styles.buttonText}>Chat</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => handleReport()}
-            style={styles.reportButton}>
-            <Text style={styles.buttonText}>Report</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={handleAddFriend}
+          style={[
+            styles.button,
+            isFriend ? styles.removeFriendButton : styles.addFriendButton,
+          ]}>
+          <Text style={styles.buttonText}>
+            {isFriend ? 'Remove Friend' : 'Add Friend'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleBlock}
+          style={[
+            styles.button,
+            isBlocked ? styles.unblockButton : styles.blockButton,
+          ]}>
+          <Text style={styles.buttonText}>
+            {isBlocked ? 'Unblock' : 'Block'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleChat}
+          disabled={isBlocked}
+          style={[
+            styles.button,
+            isBlocked ? styles.disabledButton : styles.chatButton,
+          ]}>
+          <Text style={styles.buttonText}>Chat</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setIsReportModalVisible(true)}
+          style={styles.reportButton}>
+          <Text style={styles.buttonText}>Report</Text>
+        </TouchableOpacity>
       </View>
+      <Modal visible={isReportModalVisible} animationType="fade">
+        <View style={modalStyles.modalContainer}>
+          <Text style={modalStyles.title}>Report User: {username}</Text>
+          <Dropdown
+            options={items}
+            selectedValue={reportReason}
+            onValueChange={value => setReportReason(value)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Comment"
+            value={comment}
+            onChangeText={text => setComment(text)}
+            multiline
+            numberOfLines={4}
+          />
+
+          {comment && (
+            <TouchableOpacity
+              style={modalStyles.button}
+              onPress={() => sendReport(comment, reportReason)}>
+              <Text style={modalStyles.buttonText}>Report user</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={[modalStyles.button, modalStyles.cancelButton]}
+            onPress={() => handleReportModalClose()}>
+            <Text style={modalStyles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -192,51 +268,101 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  backButton: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginRight: 10,
+    paddingHorizontal: 16,
+    height: 56,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   title: {
-    flex: 1,
     fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
+    marginLeft: 16,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-  },
-  buttonContainer: {
-    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
   },
   button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
+    backgroundColor: '#2196F3',
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginVertical: 8,
+    minWidth: 200,
   },
   buttonText: {
     color: '#fff',
+    textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  addFriendButton: {
+    backgroundColor: '#2196F3',
+  },
   removeFriendButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#f44336',
+  },
+  blockButton: {
+    backgroundColor: '#2196F3',
   },
   unblockButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#f44336',
+  },
+  chatButton: {
+    backgroundColor: '#2196F3',
   },
   disabledButton: {
-    backgroundColor: '#A7A7A7',
+    backgroundColor: '#ccc',
   },
   reportButton: {
-    backgroundColor: '#FF9500',
+    backgroundColor: '#f44336',
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginVertical: 8,
+    minWidth: 200,
+  },
+  input: {
+    backgroundColor: '#eee',
+    borderRadius: 4,
+    padding: 8,
+    marginVertical: 8,
+    height: 80,
+    textAlignVertical: 'top',
   },
 });
-export default OtherUserProfilePage;
+const modalStyles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#2196F3',
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginVertical: 8,
+    minWidth: 200,
+  },
+  cancelButton: {
+    backgroundColor: '#ccc',
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});

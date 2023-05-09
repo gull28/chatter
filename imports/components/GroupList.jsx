@@ -2,10 +2,11 @@ import React, {useState, useEffect} from 'react';
 import {FlatList} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import GroupListItem from './GroupListItem';
+import {GroupListItem} from './GroupListItem';
 
 const db = firestore();
-const GroupList = ({navigation}) => {
+
+export const GroupList = ({navigation}) => {
   const [groupList, setGroupList] = useState([]);
   const currentUserID = auth().currentUser.uid;
 
@@ -48,5 +49,3 @@ const GroupList = ({navigation}) => {
     />
   );
 };
-
-export default GroupList;

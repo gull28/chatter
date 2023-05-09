@@ -15,10 +15,6 @@ export const ViewGroup = ({navigation, route}) => {
   const isBanned = bannedUsers.includes(user.uid);
   const isFull = participants.length >= count;
 
-  const onClose = () => {
-    navigation.goBack();
-  };
-
   const joinGroup = async () => {
     if (isBanned) {
       Toast.show({
@@ -64,9 +60,7 @@ export const ViewGroup = ({navigation, route}) => {
 
   return (
     <View style={{flex: 1, padding: 16}}>
-      <TouchableOpacity onPress={onClose}>
-        <Text style={{fontSize: 16, fontWeight: 'bold'}}>Back</Text>
-      </TouchableOpacity>
+      <BackButton onPress={() => navigation.goBack()} color="#2196F3" />
       <Text style={{marginTop: 16, fontSize: 24, fontWeight: 'bold'}}>
         {name}
       </Text>

@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import auth, {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import FriendListItem from './FriendsListItem';
-import LoadingSpinner from './LoadingSpinner';
+import {FriendListItem} from './FriendsListItem';
+import {LoadingSpinner} from './LoadingSpinner';
 const db = firestore();
 
 export const FriendsList = ({

@@ -8,7 +8,7 @@ import {
   FlatList,
 } from 'react-native';
 
-const Dropdown = ({options, selectedValue, onValueChange}) => {
+export const Dropdown = ({options, selectedValue, onValueChange}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleValueChange = itemValue => {
@@ -100,5 +100,3 @@ const styles = StyleSheet.create({
     color: '#2196F3',
   },
 });
-
-export default Dropdown;

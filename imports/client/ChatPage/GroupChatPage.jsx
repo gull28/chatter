@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
-import ChatMessage from '../../components/ChatMessage';
+import {ChatMessage} from '../../components/ChatMessage';
 import {FriendsList} from '../../components/FriendsList';
-import Dropdown from '../../components/Dropdown';
-import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import {Dropdown} from '../../components/Dropdown';
+import Toast from 'react-native-toast-message';
+import {BackButton} from '../../components/BackArrow';
 
 const db = firestore();
 
@@ -263,9 +264,10 @@ export const GroupChatPage = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('MenuPage')}>
-          <Text style={{fontSize: 18}}>{'< '}</Text>
-        </TouchableOpacity>
+        <BackButton
+          onPress={() => navigation.navigate('MenuPage')}
+          color="#2196F3"
+        />
         <TouchableOpacity
           style={{flex: 1}}
           onPress={() => setIsModalVisible(true)}>

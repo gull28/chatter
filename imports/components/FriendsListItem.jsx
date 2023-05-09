@@ -7,12 +7,12 @@ import {
   Modal,
   Button,
 } from 'react-native';
-import auth, {firebase} from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 const db = firestore();
 
-const FriendListItem = ({
+export const FriendListItem = ({
   navigation,
   friendId,
   friendName,
@@ -241,4 +241,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-export default FriendListItem;

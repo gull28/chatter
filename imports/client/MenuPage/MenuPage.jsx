@@ -11,10 +11,10 @@ import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
 import CountryPicker from 'rn-country-dropdown-picker';
 import {SearchResult} from '../../components/SearchResult';
-import TabView from '../../components/TabView';
-import Dropdown from '../../components/Dropdown';
+import {TabView} from '../../components/TabView';
+import {Dropdown} from '../../components/Dropdown';
 import {FriendsList} from '../../components/FriendsList';
-import GroupList from '../../components/GroupList';
+import {GroupList} from '../../components/GroupList';
 
 const items = [
   {label: 'Public', value: true},
@@ -379,7 +379,6 @@ const styles = {
     borderWidth: 1,
     borderColor: '#ccc',
     textAlignVertical: 'top',
-    multiline: true,
   },
 
   newChatButton: {

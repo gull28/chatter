@@ -8,7 +8,7 @@ import {RegisterPage} from './imports/client/RegisterPage/RegisterPage';
 import {ProfilePage} from './imports/client/ProfilePage/ProfilePage';
 import Toast from 'react-native-toast-message';
 import {DeleteAccountPage} from './imports/client/DeleteAccountPage/DeleteAccountPage';
-import OtherUserProfilePage from './imports/client/OtherUserProfilePage/OtherUserProfilePage';
+import {OtherUserProfilePage} from './imports/client/OtherUserProfilePage/OtherUserProfilePage';
 import {ChatPage} from './imports/client/ChatPage/ChatPage';
 import {GroupChatPage} from './imports/client/ChatPage/GroupChatPage';
 import {ViewGroup} from './imports/client/ViewGroup/ViewGroup';

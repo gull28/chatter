@@ -10,6 +10,7 @@ import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
 import auth from '@react-native-firebase/auth';
+import {BackButton} from '../../components/BackArrow';
 
 const db = firestore();
 
@@ -151,11 +152,7 @@ export const ProfilePage = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}>
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
+        <BackButton onPress={() => navigation.goBack()} color="#2196F3" />
         <Text style={styles.title}>Profile Page</Text>
       </View>
       <View style={styles.infoContainer}>
