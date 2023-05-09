@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import Dropdown from './Dropdown';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const moment = require('moment');
 
@@ -122,6 +123,15 @@ const ChatMessage = ({
       })
       .then(() => {
         handleReportModalClose();
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Successfully reported user message!',
+          visibilityTime: 2000,
+          autoHide: true,
+          topOffset: 30,
+          bottomOffset: 40,
+        });
       });
   };
 
