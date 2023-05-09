@@ -55,7 +55,7 @@ const Dropdown = ({options, selectedValue, onValueChange}) => {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#2196F3',
     borderRadius: 8,
     overflow: 'hidden',
     width: '100%',
@@ -65,15 +65,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#2196F3',
   },
   selectedValue: {
     fontSize: 16,
     flex: 1,
     marginRight: 8,
+    color: '#fff',
   },
   arrow: {
     fontSize: 12,
+    color: '#fff',
   },
   modalOverlay: {
     flex: 1,
@@ -95,6 +97,7 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     fontSize: 16,
+    color: '#2196F3',
   },
 });
 

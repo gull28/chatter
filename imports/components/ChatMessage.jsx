@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import Dropdown from './Dropdown';
 
 const moment = require('moment');
 
@@ -20,6 +21,8 @@ const ChatMessage = ({
   const [showOptions, setShowOptions] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userData, setUserData] = useState({});
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false);
+  const [reportReason, setReportReason] = useState('');
 
   const handlePress = () => {
     if (senderId !== currentUser) {
@@ -27,6 +30,12 @@ const ChatMessage = ({
     }
   };
 
+  const items = [
+    {label: '', value: ''},
+    {label: 'Profanity', value: 'profanity'},
+    {label: 'Racism or prejudice', value: 'racism'},
+    {label: 'Threats or violence', value: 'threats'},
+  ];
   useEffect(() => {
     const getUserData = async () => {
       const userDocRef = db.collection('users').doc(senderId);
@@ -96,6 +105,26 @@ const ChatMessage = ({
     }
   };
 
+  const handleReportModalClose = () => {
+    setReportReason('');
+    setIsReportModalVisible(false);
+  };
+
+  const sendReport = async (message, reason) => {
+    await db
+      .collection('userReports')
+      .doc()
+      .set({
+        message,
+        reason: reason.value,
+        open: true,
+        sendUser: currentUser,
+      })
+      .then(() => {
+        handleReportModalClose();
+      });
+  };
+
   const sendTime = moment(time).fromNow();
 
   const messageStyle = {
@@ -129,8 +158,8 @@ const ChatMessage = ({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.option}
-            onPress={() => handleReport()}>
-            <Text>Option 2</Text>
+            onPress={() => setIsReportModalVisible(true)}>
+            <Text>Report message</Text>
           </TouchableOpacity>
           {showThird && (
             <TouchableOpacity
@@ -141,7 +170,31 @@ const ChatMessage = ({
           )}
         </View>
       )}
-      <Modal visible={isModalVisible} animationType="slide">
+      <Modal visible={isReportModalVisible} animationType="fade">
+        <View style={modalStyles.modalContainer}>
+          <Text style={modalStyles.title}>Report User: {sender}</Text>
+          <Text style={modalStyles.message}>{message}</Text>
+          <Dropdown
+            options={items}
+            selectedValue={reportReason}
+            onValueChange={value => setReportReason(value)}
+          />
+          {reportReason && (
+            <TouchableOpacity
+              style={modalStyles.button}
+              onPress={() => sendReport(message, reportReason)}>
+              <Text style={modalStyles.buttonText}>Report Message</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={[modalStyles.button, modalStyles.cancelButton]}
+            onPress={() => handleReportModalClose()}>
+            <Text style={modalStyles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal visible={isModalVisible} animationType="fade">
         <View style={styles.modalContainer}>
           <TouchableOpacity
             onPress={() => {
@@ -192,6 +245,67 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     marginHorizontal: 5,
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  modalButton: {
+    backgroundColor: '#2196F3',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#f44336',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  message: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#2196F3',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#f44336',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

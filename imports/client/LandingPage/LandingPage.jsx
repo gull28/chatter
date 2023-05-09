@@ -1,19 +1,24 @@
 import React, {useEffect} from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 
 export const LandingPage = ({navigation}) => {
+  const fadeInAnim = new Animated.Value(0);
+
   useEffect(() => {
-    setTimeout(() => {
-      navigation.navigate('LoginPage');
-    }, 200);
+    Animated.timing(fadeInAnim, {
+      toValue: 1,
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+    navigation.navigate('LoginPage');
   }, []);
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../../assets/logo.webp')}
-        style={styles.logo}
-      />
+      <Animated.View style={[styles.textContainer, {opacity: fadeInAnim}]}>
+        <Text style={styles.title}>Welcome to my app!</Text>
+        <Text style={styles.subtitle}>This is the landing page.</Text>
+      </Animated.View>
     </View>
   );
 };
@@ -21,12 +26,20 @@ export const LandingPage = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  logo: {
-    width: 200,
-    height: 200,
+  textContainer: {
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#777',
   },
 });

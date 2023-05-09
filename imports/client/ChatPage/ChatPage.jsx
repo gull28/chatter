@@ -96,7 +96,7 @@ export const ChatPage = ({navigation, route}) => {
   }, [chatId]);
 
   const renderMessage = ({item}) => {
-    const {senderName, sendTime, content, sender} = item;
+    const {senderName, sendTime, content, sender, id} = item;
     return (
       <ChatMessage
         sender={senderName}
