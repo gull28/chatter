@@ -51,7 +51,7 @@ export const FriendsList = ({
 
   return (
     <FlatList
-      style={styles.flatList}
+      style={styles.container}
       data={friends}
       renderItem={({item}) => (
         <FriendListItem
@@ -72,12 +72,7 @@ export const FriendsList = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#F0F0F0',
-  },
-  flatList: {
-    width: '100%',
+    backgroundColor: '#f2f2f2',
+    paddingHorizontal: 16,
   },
 });

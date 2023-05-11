@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList} from 'react-native';
+import {FlatList, StyleSheet, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {GroupListItem} from './GroupListItem';
@@ -20,7 +20,6 @@ export const GroupList = ({navigation}) => {
           .get();
 
         const groups = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-        console.log(groups);
         setGroupList(groups);
       } catch (error) {
         console.error(error);
@@ -29,8 +28,8 @@ export const GroupList = ({navigation}) => {
 
     getGroupsForCurrentUser();
   }, [currentUserID]);
+
   const handlePressGroup = group => {
-    console.log('zzz', group.id);
     navigation.navigate('GroupChatPage', {chatId: group.id});
   };
 
@@ -42,10 +41,21 @@ export const GroupList = ({navigation}) => {
   );
 
   return (
-    <FlatList
-      data={groupList}
-      renderItem={renderGroup}
-      keyExtractor={item => item.id}
-    />
+    <View style={styles.container}>
+      <FlatList
+        data={groupList}
+        renderItem={renderGroup}
+        keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
+    paddingHorizontal: 16,
+  },
+});

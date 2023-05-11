@@ -262,7 +262,7 @@ export const GroupChatPage = ({navigation, route}) => {
     return chunks;
   }
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, paddingBottom: 10}}>
       <View style={styles.header}>
         <BackButton
           onPress={() => navigation.navigate('MenuPage')}
@@ -277,7 +277,7 @@ export const GroupChatPage = ({navigation, route}) => {
           <TouchableOpacity
             style={{flex: 1}}
             onPress={() => setIsEditModalVisible(true)}>
-            <Text style={styles.headerTitle}>Edit group</Text>
+            <Text style={styles.editButton}>Edit</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -307,56 +307,62 @@ export const GroupChatPage = ({navigation, route}) => {
         </TouchableOpacity>
       </View>
       <Modal visible={isEditModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Create New Chat Group</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Group Name"
-            value={groupName}
-            onChangeText={text => setGroupName(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Number of Users"
-            value={usersCount}
-            keyboardType="phone-pad"
-            contextMenuHidden={true}
-            onChangeText={text => setUsersCount(text)}
-          />
-          <Dropdown
-            options={items}
-            selectedValue={accessible}
-            onValueChange={value => setAccessible(value)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Edit the description!"
-            value={groupDescription}
-            onChangeText={text => setGroupDescription(text)}
-          />
-          <TouchableOpacity
-            style={styles.createButton}
-            onPress={() =>
-              handleUpdateGroup(
-                usersCount,
-                groupName,
-                groupDescription,
-                accessible.value,
-              )
-            }>
-            <Text style={styles.createButtonText}>Create</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => handleEditModalClose()}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalHeader}>
+            <Text style={modalStyles.modalTitle}>Edit group parameters</Text>
+          </View>
+          <View style={modalStyles.contentContainer}>
+            <TextInput
+              style={modalStyles.input}
+              placeholder="Group Name"
+              value={groupName}
+              onChangeText={text => setGroupName(text)}
+            />
+            <TextInput
+              style={modalStyles.input}
+              placeholder="Number of Users"
+              value={usersCount}
+              keyboardType="phone-pad"
+              contextMenuHidden={true}
+              onChangeText={text => setUsersCount(text)}
+            />
+            <Dropdown
+              options={items}
+              selectedValue={accessible}
+              onValueChange={value => setAccessible(value)}
+            />
+            <TextInput
+              style={modalStyles.input}
+              placeholder="Edit the description!"
+              value={groupDescription}
+              onChangeText={text => setGroupDescription(text)}
+            />
+            <TouchableOpacity
+              style={modalStyles.createButton}
+              onPress={() =>
+                handleUpdateGroup(
+                  usersCount,
+                  groupName,
+                  groupDescription,
+                  accessible.value,
+                )
+              }>
+              <Text style={modalStyles.createButtonText}>Create</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={modalStyles.cancelButton}
+              onPress={() => handleEditModalClose()}>
+              <Text style={modalStyles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
       <Modal visible={isModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>{chatInfo.name}</Text>
-          <View style={{flex: 1, justifyContent: 'space-between'}}>
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalHeader}>
+            <Text style={modalStyles.modalTitle}>{chatInfo.name}</Text>
+          </View>
+          <View style={modalStyles.contentContainer}>
             <FriendsList
               navigation={navigation}
               getUserListData={async () => await getGroupParticipants(chatId)}
@@ -365,21 +371,21 @@ export const GroupChatPage = ({navigation, route}) => {
             />
             {isGroupOwner ? (
               <TouchableOpacity
-                style={styles.deleteButton}
+                style={modalStyles.deleteButton}
                 onPress={handleDeleteGroup}>
-                <Text style={styles.deleteButtonText}>Delete Group</Text>
+                <Text style={modalStyles.deleteButtonText}>Delete Group</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                style={styles.leaveButton}
+                style={modalStyles.leaveButton}
                 onPress={handleLeaveGroup}>
-                <Text style={styles.leaveButtonText}>Leave Group</Text>
+                <Text style={modalStyles.leaveButtonText}>Leave Group</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={styles.cancelButton}
+              style={modalStyles.cancelButton}
               onPress={() => setIsModalVisible(false)}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={modalStyles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -390,6 +396,7 @@ export const GroupChatPage = ({navigation, route}) => {
 
 const styles = StyleSheet.create({
   header: {
+    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
@@ -399,6 +406,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  editButton: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'right',
   },
   noMessagesContainer: {
     flex: 1,
@@ -425,7 +437,7 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     marginLeft: 10,
-    backgroundColor: 'blue',
+    backgroundColor: '#2196F3',
     borderRadius: 5,
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -435,28 +447,89 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+});
+
+const modalStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  modalHeader: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    alignContent: 'center',
     paddingHorizontal: 20,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  cancelButton: {
-    marginTop: 20,
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#2196F3',
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
+    padding: 15,
+  },
+  input: {
+    height: 40,
+    width: '100%',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  createButton: {
+    backgroundColor: '#2196F3',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  createButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  deleteButton: {
     backgroundColor: '#f44336',
     borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginVertical: 5,
+  },
+  deleteButtonText: {
+    color: '#fff', // Set the color to #2196F3
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  leaveButton: {
+    backgroundColor: '#f44336',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginVertical: 5,
+  },
+  leaveButtonText: {
+    color: '#2196F3', // Set the color to #2196F3
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#ccc',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
   },
   cancelButtonText: {
     color: '#fff',
+    textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 16,
   },
 });

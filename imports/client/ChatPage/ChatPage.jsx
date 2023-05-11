@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
-import ChatMessage from '../../components/ChatMessage';
+import {ChatMessage} from '../../components/ChatMessage';
 
 const db = firestore();
 

@@ -139,7 +139,7 @@ export const ChatMessage = ({
 
   const messageStyle = {
     alignSelf: currentUser === senderId ? 'flex-end' : 'flex-start',
-    backgroundColor: currentUser === senderId ? '#DCF8C6' : '#E5E5EA',
+    backgroundColor: currentUser === senderId ? '#b6edfc' : '#E5E5EA',
   };
 
   const senderTextStyle = {
