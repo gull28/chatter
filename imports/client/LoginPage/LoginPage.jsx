@@ -67,12 +67,12 @@ export const LoginPage = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Logo</Text>
+      <Text style={styles.logo}>Chatter</Text>
       <View style={styles.inputView}>
         <TextInput
           style={styles.inputText}
           placeholder="Email"
-          placeholderTextColor="#003f5c"
+          placeholderTextColor="#2196F3"
           onChangeText={setEmail}
         />
       </View>
@@ -80,19 +80,19 @@ export const LoginPage = ({navigation}) => {
         <TextInput
           style={styles.inputText}
           placeholder="Password"
-          placeholderTextColor="#003f5c"
+          placeholderTextColor="#2196F3"
           secureTextEntry={true}
           onChangeText={setPassword}
         />
       </View>
       <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
-        <Text style={styles.loginText}>LOGIN</Text>
+        <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.loginBtn}
+        style={styles.registerBtn}
         onPress={() => navigation.navigate('RegisterPage')}>
-        <Text style={styles.loginText}>Register now</Text>
+        <Text style={styles.registerText}>Register now</Text>
       </TouchableOpacity>
     </View>
   );
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   logo: {
     fontWeight: 'bold',
     fontSize: 50,
-    color: '#003f5c',
+    color: '#2196F3',
     marginBottom: 40,
   },
   inputView: {
@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
   },
   inputText: {
     height: 50,
-    color: '#003f5c',
+    color: 'black',
   },
   loginBtn: {
     width: '80%',
-    backgroundColor: '#fb5b5a',
+    backgroundColor: '#2196F3',
     borderRadius: 25,
     height: 50,
     alignItems: 'center',
@@ -136,5 +136,18 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: '#fff',
+  },
+  registerBtn: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#2196F3',
+  },
+  registerText: {
+    color: '#2196F3',
   },
 });

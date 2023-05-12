@@ -1,24 +1,22 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
+import * as Animatable from 'react-native-animatable';
 
 export const LandingPage = ({navigation}) => {
-  const fadeInAnim = new Animated.Value(0);
-
   useEffect(() => {
-    Animated.timing(fadeInAnim, {
-      toValue: 1,
-      duration: 2000,
-      useNativeDriver: true,
-    }).start();
-    navigation.navigate('LoginPage');
-  }, []);
+    // Navigate to a different page after the animation ends
+    const timeout = setTimeout(() => {
+      navigation.navigate('LoginPage');
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.textContainer, {opacity: fadeInAnim}]}>
-        <Text style={styles.title}>Welcome to my app!</Text>
-        <Text style={styles.subtitle}>This is the landing page.</Text>
-      </Animated.View>
+      <Animatable.Text animation="bounceIn" style={styles.title}>
+        Chatter
+      </Animatable.Text>
     </View>
   );
 };
@@ -26,20 +24,13 @@ export const LandingPage = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#2196F3',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textContainer: {
-    alignItems: 'center',
-  },
   title: {
-    fontSize: 24,
+    fontSize: 48,
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#777',
+    color: '#fff',
   },
 });

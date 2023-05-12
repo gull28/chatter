@@ -11,6 +11,7 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {ChatMessage} from '../../components/ChatMessage';
+import {BackButton} from '../../components/BackArrow';
 
 const db = firestore();
 
@@ -141,9 +142,10 @@ export const ChatPage = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('MenuPage')}>
-          <Text style={{fontSize: 18}}>{' < '}</Text>
-        </TouchableOpacity>
+        <BackButton
+          onPress={() => navigation.navigate('MenuPage')}
+          color="#2196F3"
+        />
         <TouchableOpacity
           style={{flex: 1}}
           onPress={() =>

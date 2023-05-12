@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
+import {BackButton} from '../../components/BackArrow';
 
 const db = firestore();
 export const ViewGroup = ({navigation, route}) => {
@@ -59,24 +60,48 @@ export const ViewGroup = ({navigation, route}) => {
   };
 
   return (
-    <View style={{flex: 1, padding: 16}}>
-      <BackButton onPress={() => navigation.goBack()} color="#2196F3" />
-      <Text style={{marginTop: 16, fontSize: 24, fontWeight: 'bold'}}>
-        {name}
-      </Text>
-      <Text style={{marginTop: 16, fontSize: 16}}>{groupDescription}</Text>
-      <TouchableOpacity
-        onPress={joinGroup}
-        style={{
-          marginTop: 16,
-          backgroundColor: '#007AFF',
-          borderRadius: 8,
-          padding: 8,
-        }}>
-        <Text style={{color: '#FFF', fontSize: 16, fontWeight: 'bold'}}>
-          Join Group
+    <View style={{flex: 1}}>
+      <View style={styles.header}>
+        <BackButton onPress={() => navigation.goBack()} color="#2196F3" />
+        <Text style={{marginTop: 16, fontSize: 24, fontWeight: 'bold'}}>
+          {name}
         </Text>
-      </TouchableOpacity>
+      </View>
+      <View style={styles.content}>
+        <Text style={{marginTop: 16, fontSize: 16}}>{groupDescription}</Text>
+        <TouchableOpacity
+          onPress={joinGroup}
+          style={{
+            width: 250,
+            marginTop: 16,
+            backgroundColor: '#007AFF',
+            borderRadius: 8,
+            padding: 8,
+            alignItems: 'center',
+          }}>
+          <Text style={{color: '#FFF', fontSize: 16, fontWeight: 'bold'}}>
+            Join Group
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    height: 56,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingRight: '35%',
+    justifyContent: 'space-between',
+  },
+  content: {
+    flex: 1,
+    padding: 10,
+    alignItems: 'center',
+  },
+});

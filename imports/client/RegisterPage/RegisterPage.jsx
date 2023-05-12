@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#2196F3',
   },
   input: {
     backgroundColor: '#f2f2f2',
@@ -107,13 +108,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 40,
     marginBottom: 10,
+    color: '#333',
   },
   invalid: {
     borderColor: 'red',
     borderWidth: 1,
   },
   button: {
-    backgroundColor: '#00bfff',
+    backgroundColor: '#2196F3',
     borderRadius: 10,
     paddingHorizontal: 10,
     height: 40,

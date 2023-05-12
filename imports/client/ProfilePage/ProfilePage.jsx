@@ -238,6 +238,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#2196F3',
   },
   infoContainer: {
     marginBottom: 10,
