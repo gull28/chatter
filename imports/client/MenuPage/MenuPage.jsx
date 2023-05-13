@@ -33,7 +33,6 @@ export const MenuPage = ({navigation, route}) => {
   const [accessible, setAccessible] = useState(true);
   const [region, setRegion] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
-  const [selectedMenuTab, setSelectedMenuTab] = useState(0);
   const [groupDescription, setGroupDescription] = useState('');
 
   const tabs = [{label: 'Groups'}, {label: 'Users'}];
@@ -79,7 +78,6 @@ export const MenuPage = ({navigation, route}) => {
     if (searchQuery) {
       searchChatGroups();
       searchUsers();
-      setSelectedMenuTab(0);
     }
   }, [searchQuery]);
 
@@ -122,10 +120,6 @@ export const MenuPage = ({navigation, route}) => {
       .then(() => {
         setIsModalVisible(false);
       });
-  };
-
-  const handleMenuTabChange = index => {
-    setSelectedMenuTab(index);
   };
 
   const retrieveDocument = async documentId => {
@@ -184,10 +178,6 @@ export const MenuPage = ({navigation, route}) => {
     return userFriendsNames || [];
   };
 
-  useState(() => {
-    console.log(selectedMenuTab);
-  }, [selectedMenuTab]);
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -241,10 +231,10 @@ export const MenuPage = ({navigation, route}) => {
         <>
           <TabView
             tabs={menuTabs}
-            initialTab={selectedMenuTab}
-            onTabChange={handleMenuTabChange}
+            initialTab={selectedTab}
+            onTabChange={handleTabChange}
           />
-          {selectedMenuTab ? (
+          {selectedTab ? (
             <FriendsList
               navigation={navigation}
               getUserListData={() => getUserFriends(currentUser)}
