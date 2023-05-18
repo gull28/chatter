@@ -26,12 +26,13 @@ export const FriendsList = ({
   useEffect(() => {
     const fetchFriends = async () => {
       setIsLoading(true);
-      const friendsList = await getUserListData();
-      setFriends(friendsList);
+      const friendsData = await getUserListData(); // Call the function to get the updated userFriends data
+      setFriends(friendsData); // Update the state with the new data
       setIsLoading(false);
     };
+
     fetchFriends();
-  }, []);
+  }, [getUserListData]);
 
   const handleFriendPress = friendId => {
     setSelectedFriendId(friendId);

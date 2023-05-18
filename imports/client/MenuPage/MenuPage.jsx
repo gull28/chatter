@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {TabView} from '../../components/TabView';
 import {Dropdown} from '../../components/Dropdown';
 import {FriendsList} from '../../components/FriendsList';
 import {GroupList} from '../../components/GroupList';
+import {useFocusEffect} from '@react-navigation/native';
 
 const items = [
   {label: 'Public', value: true},
@@ -34,12 +35,38 @@ export const MenuPage = ({navigation, route}) => {
   const [region, setRegion] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
   const [groupDescription, setGroupDescription] = useState('');
+  const [userFriends, setUserFriends] = useState([]);
+  const [userGroups, setUserGroups] = useState([]);
 
   const tabs = [{label: 'Groups'}, {label: 'Users'}];
 
   const menuTabs = [{label: 'Groups'}, {label: 'Friends'}];
 
   const currentUser = firebase.auth().currentUser.uid;
+  useFocusEffect(
+    useCallback(() => {
+      const fetchFriends = async () => {
+        const friends = await getUserFriends(currentUser);
+        setUserFriends(friends);
+      };
+
+      const fetchGroups = async () => {
+        const groups = await getGroupsForCurrentUser();
+        setUserGroups(groups);
+      };
+
+      fetchGroups();
+      fetchFriends();
+    }, []),
+  );
+
+  useEffect(() => {
+    console.log('wallahiiiiiii!!!!!!', userFriends);
+  }, [userFriends]);
+
+  useEffect(() => {
+    console.log('123123123123!!!!!!', userGroups);
+  }, [userGroups]);
 
   useEffect(() => {
     const searchChatGroups = async () => {
@@ -55,7 +82,6 @@ export const MenuPage = ({navigation, route}) => {
         ...doc.data(),
       }));
 
-      // Do something with the retrieved chat groups
       setSearchResultsGroups(groups);
     };
 
@@ -71,7 +97,6 @@ export const MenuPage = ({navigation, route}) => {
         ...doc.data(),
       }));
 
-      // Do something with the retrieved users
       setSearchResultsUsers(users);
     };
 
@@ -101,6 +126,21 @@ export const MenuPage = ({navigation, route}) => {
     setSelectedTab(index);
   };
 
+  const getGroupsForCurrentUser = async () => {
+    try {
+      const groupChatsCollection = db.collection('chatGroups');
+
+      const snapshot = await groupChatsCollection
+        .where('participants', 'array-contains', currentUser)
+        .get();
+
+      const groups = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+      return groups;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleCreateGroup = async (count, name, accessibility) => {
     await db
       .collection('chatGroups')
@@ -116,10 +156,12 @@ export const MenuPage = ({navigation, route}) => {
         region,
         groupDescription,
         participants: [currentUser],
-      })
-      .then(() => {
-        setIsModalVisible(false);
       });
+
+    setIsModalVisible(false);
+
+    const groups = await getGroupsForCurrentUser();
+    setUserGroups(groups);
   };
 
   const retrieveDocument = async documentId => {
@@ -237,10 +279,13 @@ export const MenuPage = ({navigation, route}) => {
           {selectedTab ? (
             <FriendsList
               navigation={navigation}
-              getUserListData={() => getUserFriends(currentUser)}
+              getUserListData={() => userFriends}
             />
           ) : (
-            <GroupList navigation={navigation} />
+            <GroupList
+              navigation={navigation}
+              getUserGroupData={() => userGroups}
+            />
           )}
           <TouchableOpacity
             style={styles.newChatButton}

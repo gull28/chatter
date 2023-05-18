@@ -179,10 +179,7 @@ export const OtherUserProfilePage = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <BackButton
-          onPress={() => navigation.navigate('MenuPage')}
-          color="#2196F3"
-        />
+        <BackButton onPress={() => navigation.goBack()} color="#2196F3" />
         <Text style={styles.title}>{username}</Text>
         <View style={{flex: 1}} />
       </View>

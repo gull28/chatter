@@ -6,28 +6,18 @@ import {GroupListItem} from './GroupListItem';
 
 const db = firestore();
 
-export const GroupList = ({navigation}) => {
+export const GroupList = ({navigation, getUserGroupData}) => {
   const [groupList, setGroupList] = useState([]);
   const currentUserID = auth().currentUser.uid;
 
   useEffect(() => {
-    const getGroupsForCurrentUser = async () => {
-      try {
-        const groupChatsCollection = db.collection('chatGroups');
-
-        const snapshot = await groupChatsCollection
-          .where('participants', 'array-contains', currentUserID)
-          .get();
-
-        const groups = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-        setGroupList(groups);
-      } catch (error) {
-        console.error(error);
-      }
+    const fetchData = async () => {
+      const groupList = await getUserGroupData();
+      setGroupList(groupList);
     };
 
-    getGroupsForCurrentUser();
-  }, [currentUserID]);
+    fetchData();
+  }, [getUserGroupData]);
 
   const handlePressGroup = group => {
     navigation.navigate('GroupChatPage', {chatId: group.id});

@@ -3,6 +3,7 @@ import {View, Text, SafeAreaView} from 'react-native';
 import {StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message';
 
 const db = firestore();
 
@@ -32,8 +33,26 @@ export const RegisterPage = ({navigation}) => {
         email: email,
       });
       navigation.navigate('MenuPage');
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: `Successfully registered user ${username}`,
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
     } catch (error) {
-      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error.message,
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
     }
   };
   const handlePhoneNumberChange = value => {
