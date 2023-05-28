@@ -30,11 +30,8 @@ export const ProfilePage = ({navigation, route}) => {
       if (userDoc.exists) {
         return userDoc.data();
       } else {
-        console.log('User data not found');
       }
-    } catch (error) {
-      console.log('Error retrieving user data: ', error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -53,9 +50,7 @@ export const ProfilePage = ({navigation, route}) => {
     try {
       await auth().signOut();
       navigation.navigate('LoginPage');
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handleUsernameChange = username => {
@@ -102,7 +97,6 @@ export const ProfilePage = ({navigation, route}) => {
         });
 
         navigation.navigate('MenuPage');
-        console.log('Password successfully updated!');
       } catch (error) {
         Toast.show({
           type: 'error',
@@ -127,14 +121,10 @@ export const ProfilePage = ({navigation, route}) => {
     }
 
     if (!username || !phoneNumber) {
-      console.log('Please provide a valid username and phone number.');
       return;
     }
 
     if (!username || (!phoneNumber && username === userData.username)) {
-      console.log(
-        'The new username cannot be the same as the current username.',
-      );
       return;
     } else {
       try {
@@ -142,10 +132,7 @@ export const ProfilePage = ({navigation, route}) => {
           username: username,
           phoneNumber: phoneNumber,
         });
-        console.log('Changes saved successfully');
-      } catch (error) {
-        console.log('Error saving changes: ', error);
-      }
+      } catch (error) {}
     }
   };
 

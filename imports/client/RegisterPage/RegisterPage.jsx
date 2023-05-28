@@ -10,13 +10,9 @@ const db = firestore();
 export const RegisterPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
 
-  useState(() => {
-    console.log(firebase);
-  });
   const register = async (email, password, username, phoneNumber) => {
     try {
       const {user} = await auth().createUserWithEmailAndPassword(
@@ -28,7 +24,6 @@ export const RegisterPage = ({navigation}) => {
 
       await db.collection('users').doc(user.uid).set({
         username: username,
-        phoneNumber: phoneNumber,
         friends: [],
         email: email,
       });
@@ -55,13 +50,6 @@ export const RegisterPage = ({navigation}) => {
       });
     }
   };
-  const handlePhoneNumberChange = value => {
-    // phone number validation regex
-    const phoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/;
-    setPhoneNumber(value);
-    setIsValidPhoneNumber(phoneRegex.test(value));
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registration</Text>
@@ -79,13 +67,6 @@ export const RegisterPage = ({navigation}) => {
         value={username}
         onChangeText={text => setUsername(text)}
         autoCapitalize="none"
-      />
-      <TextInput
-        style={[styles.input, !isValidPhoneNumber && styles.invalid]}
-        placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={text => handlePhoneNumberChange(text)}
-        keyboardType="phone-pad"
       />
       <TextInput
         style={styles.input}

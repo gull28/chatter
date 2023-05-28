@@ -70,7 +70,6 @@ export const OtherUserProfilePage = ({route, navigation}) => {
     const userDocRef = db.collection('users').doc(currentUser.uid);
     const userDoc = await userDocRef.get();
     const blockedUsers = userDoc.get('blockedUsers') || [];
-    console.log(blockedUsers);
     const blockedUserIndex = blockedUsers.indexOf(String(id));
 
     if (blockedUserIndex >= 0) {
@@ -90,9 +89,7 @@ export const OtherUserProfilePage = ({route, navigation}) => {
     const currentUser = firebase.auth().currentUser;
     const userDocRef = db.collection('users').doc(currentUser.uid);
     const userDoc = await userDocRef.get();
-    console.log('userDoc', userDoc);
     const friends = userDoc.get('friends') || [];
-    console.log('friends', friends);
     const friendIndex = friends.indexOf(String(id));
 
     if (friendIndex >= 0) {
@@ -147,9 +144,11 @@ export const OtherUserProfilePage = ({route, navigation}) => {
       .doc()
       .set({
         comment,
-        reason: reason.value,
+        reason: reason,
         open: true,
         sendUser: currentUser.uid,
+        reportedUsername: username,
+        reportedUser: id,
       })
       .then(() => {
         handleReportModalClose();

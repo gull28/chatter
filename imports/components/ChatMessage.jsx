@@ -37,16 +37,6 @@ export const ChatMessage = ({
     {label: 'Racism or prejudice', value: 'racism'},
     {label: 'Threats or violence', value: 'threats'},
   ];
-  useEffect(() => {
-    const getUserData = async () => {
-      const userDocRef = db.collection('users').doc(senderId);
-      const userRef = await userDocRef.get();
-      const userData = userRef.data();
-      userData.id = senderId;
-      setUserData(userData);
-    };
-    getUserData();
-  }, [showOptions]);
 
   const handleBan = (chatGroupId, friendId) => {
     if (groupMessage) {
@@ -59,7 +49,6 @@ export const ChatMessage = ({
         .get()
         .then(doc => {
           if (!doc.exists) {
-            console.log(`Chat group with id ${chatGroupId} does not exist`);
             return;
           }
 
@@ -120,6 +109,8 @@ export const ChatMessage = ({
         reason: reason.value,
         open: true,
         sendUser: currentUser,
+        reportedUsername: sender,
+        reportedUser: senderId,
       })
       .then(() => {
         handleReportModalClose();
@@ -161,9 +152,11 @@ export const ChatMessage = ({
         <View style={styles.optionsContainer}>
           <TouchableOpacity
             style={styles.option}
-            onPress={() =>
-              navigation.navigate('OtherUserProfilePage', {result: userData})
-            }>
+            onPress={() => {
+              navigation.navigate('OtherUserProfilePage', {
+                result: {username: sender, id: senderId},
+              });
+            }}>
             <Text>View profile</Text>
           </TouchableOpacity>
           <TouchableOpacity

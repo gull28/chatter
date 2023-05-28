@@ -110,10 +110,6 @@ export const ChatPage = ({navigation, route}) => {
     );
   };
 
-  useEffect(() => {
-    console.log(navigation);
-  }, [navigation]);
-
   const handleSendMessage = () => {
     if (newMessage.length === 0) {
       return; // Don't send empty messages
@@ -148,11 +144,11 @@ export const ChatPage = ({navigation, route}) => {
         />
         <TouchableOpacity
           style={{flex: 1}}
-          onPress={() =>
+          onPress={() => {
             navigation.navigate('OtherUserProfilePage', {
               result: participantInfo,
-            })
-          }>
+            });
+          }}>
           <Text style={styles.headerTitle}>{participantInfo.username}</Text>
         </TouchableOpacity>
       </View>

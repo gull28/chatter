@@ -101,7 +101,6 @@ export const GroupChatPage = ({navigation, route}) => {
       setIsModalVisible(false);
       navigation.navigate('MenuPage');
     } catch (error) {
-      console.log(error);
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -113,10 +112,6 @@ export const GroupChatPage = ({navigation, route}) => {
       });
     }
   };
-
-  useEffect(() => {
-    console.log(accessible);
-  }, [accessible]);
 
   const handleEditModalClose = () => {
     setIsEditModalVisible(false);
@@ -146,7 +141,6 @@ export const GroupChatPage = ({navigation, route}) => {
         bottomOffset: 40,
       });
     } catch (error) {
-      console.log(error);
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -161,7 +155,6 @@ export const GroupChatPage = ({navigation, route}) => {
 
   const renderMessage = ({item}) => {
     const {senderName, sendTime, content, sender} = item;
-
     const showThird = isUserGroupAdmin || isGroupOwner;
     return (
       <ChatMessage

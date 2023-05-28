@@ -61,14 +61,6 @@ export const MenuPage = ({navigation, route}) => {
   );
 
   useEffect(() => {
-    console.log('wallahiiiiiii!!!!!!', userFriends);
-  }, [userFriends]);
-
-  useEffect(() => {
-    console.log('123123123123!!!!!!', userGroups);
-  }, [userGroups]);
-
-  useEffect(() => {
     const searchChatGroups = async () => {
       const snapshot = await db
         .collection('chatGroups')
@@ -195,13 +187,9 @@ export const MenuPage = ({navigation, route}) => {
     try {
       const groupRef = firestore().collection('chatGroups').doc(groupId);
       const groupSnapshot = await groupRef.get();
-      console.log('groupsnapshot', groupSnapshot);
       const participants = groupSnapshot.get('participants');
-      console.log('participants', participants);
-      console.log(participants.includes('includes', userId));
       return participants.includes(userId);
     } catch (error) {
-      console.log(error);
       return false;
     }
   };

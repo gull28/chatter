@@ -81,7 +81,6 @@ export const FriendListItem = ({
   const handleBan = (chatGroupId, friendId) => {
     const userId = friendId; // user to be banned
     const chatGroupsRef = db.collection('chatGroups').doc(chatGroupId);
-    console.log('grupasinfo', groupInfo);
     // Check if current user is an admin
     // Remove all messages that contain the banned user's id
     // Remove the banned user from the admins and participants arrays
@@ -89,7 +88,6 @@ export const FriendListItem = ({
       .get()
       .then(doc => {
         if (!doc.exists) {
-          console.log(`Chat group with id ${chatGroupId} does not exist`);
           return;
         }
 
