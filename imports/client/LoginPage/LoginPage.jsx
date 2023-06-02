@@ -7,7 +7,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
+import firestore from '@react-native-firebase/firestore';
+
 import auth from '@react-native-firebase/auth';
+import {errorToast, successToast} from '../../helpers/helpers';
+const db = firestore();
 
 export const LoginPage = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -16,51 +20,45 @@ export const LoginPage = ({navigation}) => {
   const handleLogin = () => {
     auth()
       .signInWithEmailAndPassword(email, password)
-      .then(userCred => {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Logged in successfully!',
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
+      .then(async userCred => {
+        const user = userCred.user;
+
+        // Check if the user is an app admin
+        const appAdminsSnapshot = await db
+          .collection('appAdmins')
+          .doc(user.uid)
+          .get();
+        if (appAdminsSnapshot.exists) {
+          errorToast(
+            'Access denied. You are not allowed to log in as an app admin.',
+          );
+          auth().signOut(); // Sign out the user
+          return;
+        }
+
+        // Check if the user is banned
+        const bannedUsersSnapshot = await db
+          .collection('bannedUsers')
+          .doc(user.uid)
+          .get();
+        if (bannedUsersSnapshot.exists) {
+          errorToast('Access denied. Your account has been banned.');
+          auth().signOut(); // Sign out the user
+          return;
+        }
+
+        successToast('Logged in successfully!');
         navigation.navigate('MenuPage');
       })
       .catch(error => {
         if (error.code === 'auth/invalid-email') {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'Invalid email address',
-            visibilityTime: 3000,
-            autoHide: true,
-            topOffset: 30,
-            bottomOffset: 40,
-          });
+          errorToast('Invalid email address');
         } else if (error.code === 'auth/user-not-found') {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'User not found',
-            visibilityTime: 3000,
-            autoHide: true,
-            topOffset: 30,
-            bottomOffset: 40,
-          });
+          errorToast('User not found');
         } else if (error.code === 'auth/wrong-password') {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'Wrong password',
-            visibilityTime: 3000,
-            autoHide: true,
-            topOffset: 30,
-            bottomOffset: 40,
-          });
+          errorToast('Wrong password');
         } else {
-          console.error(error);
+          errorToast(error.message);
         }
       });
   };

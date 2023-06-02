@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
 import {BackButton} from '../../components/BackArrow';
+import {errorToast} from '../../helpers/helpers';
 
 const db = firestore();
 export const ViewGroup = ({navigation, route}) => {
@@ -18,25 +19,9 @@ export const ViewGroup = ({navigation, route}) => {
 
   const joinGroup = async () => {
     if (isBanned) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'You are banned from this group.',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      errorToast('You are banned from this group.');
     } else if (isFull) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'This group is already full.',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      errorToast('This group is already full.');
     } else {
       // join the group
       try {
@@ -46,15 +31,7 @@ export const ViewGroup = ({navigation, route}) => {
         });
         navigation.navigate('GroupChatPage', {chatId: id});
       } catch (error) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: error.message,
-          visibilityTime: 3000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
+        errorToast(error.message);
       }
     }
   };

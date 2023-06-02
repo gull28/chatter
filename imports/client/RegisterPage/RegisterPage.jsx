@@ -4,6 +4,7 @@ import {StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
+import {errorToast, successToast} from '../../helpers/helpers';
 
 const db = firestore();
 
@@ -11,10 +12,37 @@ export const RegisterPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
 
-  const register = async (email, password, username, phoneNumber) => {
+  const register = async (email, password, username) => {
     try {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errorToast('Invalid email address');
+        return;
+      }
+
+      if (username.length > 12) {
+        errorToast('Username should not exceed 12 characters');
+        return;
+      }
+
+      // Add a regular expression to check for bad symbols in the username
+      const usernameRegex = /^[a-zA-Z0-9_-]+$/; // Only allows alphanumeric characters, underscores, and hyphens
+      if (!usernameRegex.test(username)) {
+        errorToast('Username contains invalid characters');
+        return;
+      }
+
+      const bannedUsersSnapshot = await db
+        .collection('bannedUsers')
+        .where('email', '==', email)
+        .get();
+
+      if (!bannedUsersSnapshot.empty) {
+        errorToast('Access denied. This email address has been banned.');
+        return;
+      }
+
       const {user} = await auth().createUserWithEmailAndPassword(
         email,
         password,
@@ -27,27 +55,11 @@ export const RegisterPage = ({navigation}) => {
         friends: [],
         email: email,
       });
-      navigation.navigate('MenuPage');
 
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: `Successfully registered user ${username}`,
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      navigation.navigate('MenuPage');
+      successToast(`Successfully registered user ${username}`);
     } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: error.message,
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      errorToast(error.message);
     }
   };
   return (
@@ -76,9 +88,8 @@ export const RegisterPage = ({navigation}) => {
         secureTextEntry
       />
       <TouchableOpacity
-        style={[styles.button, !isValidPhoneNumber && styles.disabled]}
-        onPress={() => register(email, password, username, phoneNumber)}
-        disabled={!isValidPhoneNumber}>
+        style={[styles.button]}
+        onPress={() => register(email, password, username)}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
       <TouchableOpacity

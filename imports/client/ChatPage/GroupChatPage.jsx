@@ -16,6 +16,7 @@ import {FriendsList} from '../../components/FriendsList';
 import {Dropdown} from '../../components/Dropdown';
 import Toast from 'react-native-toast-message';
 import {BackButton} from '../../components/BackArrow';
+import {errorToast, successToast} from '../../helpers/helpers';
 
 const db = firestore();
 
@@ -101,15 +102,7 @@ export const GroupChatPage = ({navigation, route}) => {
       setIsModalVisible(false);
       navigation.navigate('MenuPage');
     } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: error.message,
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      errorToast(error.message);
     }
   };
 
@@ -131,36 +124,21 @@ export const GroupChatPage = ({navigation, route}) => {
       await groupRef.delete();
       setIsModalVisible(false);
       navigation.navigate('MenuPage');
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: 'Successfully deleted group!',
-        visibilityTime: 2000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      successToast('Successfully deleted group!');
     } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: error.message,
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      errorToast(error.message);
     }
   };
 
   const renderMessage = ({item}) => {
-    const {senderName, sendTime, content, sender} = item;
+    const {senderName, sendTime, content, sender, email} = item;
     const showThird = isUserGroupAdmin || isGroupOwner;
     return (
       <ChatMessage
         sender={senderName}
         senderId={sender}
         time={sendTime}
+        email={email}
         message={content}
         currentUser={currentUser.uid}
         groupInfo={chatInfo}
@@ -187,15 +165,7 @@ export const GroupChatPage = ({navigation, route}) => {
       })
       .then(() => {
         navigation.navigate('MenuPage');
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Group parameters successfully updated!',
-          visibilityTime: 4000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
+        successToast('Group parameters successfully updated!');
       });
   };
 
@@ -242,8 +212,8 @@ export const GroupChatPage = ({navigation, route}) => {
     const userFriendsNames = participantSnapshots.map(doc => ({
       id: doc.id,
       username: doc.data().username,
+      email: doc.data().email,
     }));
-
     return userFriendsNames;
   };
 

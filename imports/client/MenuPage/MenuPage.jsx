@@ -47,6 +47,7 @@ export const MenuPage = ({navigation, route}) => {
     useCallback(() => {
       const fetchFriends = async () => {
         const friends = await getUserFriends(currentUser);
+        console.log('aaaaaaaa', friends);
         setUserFriends(friends);
       };
 
@@ -203,7 +204,13 @@ export const MenuPage = ({navigation, route}) => {
       const userFriendName = db.collection('users').doc(friendId);
       const userFriendNameDoc = await userFriendName.get();
       const friendName = userFriendNameDoc.data().username;
-      userFriendsNames.push({id: friendId, username: friendName});
+      const friendEmail = userFriendNameDoc.data().email;
+
+      userFriendsNames.push({
+        id: friendId,
+        username: friendName,
+        email: friendEmail,
+      });
     }
     return userFriendsNames || [];
   };

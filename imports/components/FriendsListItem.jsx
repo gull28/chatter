@@ -25,7 +25,7 @@ export const FriendListItem = ({
   const currentUser = firebase.auth().currentUser.uid;
   const [isBanModalVisible, setIsBanModalVisible] = useState(false);
   const [isUserAdministrator, setIsUserAdministrator] = useState(false);
-
+  console.log('friendsData', friendData);
   const isUserAdmin = userId => {
     return groupInfo.admins.includes(userId);
   };

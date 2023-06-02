@@ -11,6 +11,7 @@ import {firebase} from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
 import auth from '@react-native-firebase/auth';
 import {BackButton} from '../../components/BackArrow';
+import {errorToast, successToast} from '../../helpers/helpers';
 
 const db = firestore();
 
@@ -86,38 +87,16 @@ export const ProfilePage = ({navigation, route}) => {
 
         await user.updatePassword(newPassword);
 
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Password successfully updated!',
-          visibilityTime: 4000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
+        successToast('Password successfully updated!');
 
         navigation.navigate('MenuPage');
       } catch (error) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Password error!',
-          visibilityTime: 4000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
+        errorToast('Password error!');
       }
     } else {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Password must not be empty or the same as your last password!',
-        visibilityTime: 4000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
+      errorToast(
+        'Password must not be empty or the same as your last password!',
+      );
     }
 
     if (!username || !phoneNumber) {
@@ -132,7 +111,9 @@ export const ProfilePage = ({navigation, route}) => {
           username: username,
           phoneNumber: phoneNumber,
         });
-      } catch (error) {}
+      } catch (error) {
+        errorToast(error.message);
+      }
     }
   };
 

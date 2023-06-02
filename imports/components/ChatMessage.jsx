@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Dropdown} from './Dropdown';
 import Toast from 'react-native-toast-message';
+import {successToast} from '../helpers/helpers';
 
 const moment = require('moment');
 
@@ -12,6 +13,7 @@ export const ChatMessage = ({
   navigation,
   senderId,
   sender,
+  email,
   time,
   message,
   currentUser,
@@ -111,18 +113,11 @@ export const ChatMessage = ({
         sendUser: currentUser,
         reportedUsername: sender,
         reportedUser: senderId,
+        email,
       })
       .then(() => {
         handleReportModalClose();
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Successfully reported user message!',
-          visibilityTime: 2000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
+        successToast('Successfully reported user message!');
       });
   };
 

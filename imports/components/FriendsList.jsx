@@ -18,7 +18,6 @@ export const FriendsList = ({
   isGroupList = false,
   groupInfo = {},
 }) => {
-  const currentUser = firebase.auth().currentUser.uid;
   const [friends, setFriends] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFriendId, setSelectedFriendId] = useState(null);

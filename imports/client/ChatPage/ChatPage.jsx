@@ -12,6 +12,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {ChatMessage} from '../../components/ChatMessage';
 import {BackButton} from '../../components/BackArrow';
+import {errorToast} from '../../helpers/helpers';
 
 const db = firestore();
 
@@ -97,11 +98,13 @@ export const ChatPage = ({navigation, route}) => {
   }, [chatId]);
 
   const renderMessage = ({item}) => {
-    const {senderName, sendTime, content, sender, id} = item;
+    const {senderName, sendTime, content, sender, id, email} = item;
+    console.log(item);
     return (
       <ChatMessage
         sender={senderName}
         senderId={sender}
+        email={email}
         time={sendTime}
         message={content}
         currentUser={currentUser.uid}
@@ -113,6 +116,11 @@ export const ChatPage = ({navigation, route}) => {
   const handleSendMessage = () => {
     if (newMessage.length === 0) {
       return; // Don't send empty messages
+    }
+
+    if (newMessage.length > 1000) {
+      errorToast('Message exceeds the maximum limit of 1000 characters');
+      return; // Don't send the message if it exceeds the limit
     }
 
     const conversationRef = db.collection('conversations').doc(chatId);
@@ -132,9 +140,10 @@ export const ChatPage = ({navigation, route}) => {
         setNewMessage('');
       })
       .catch(error => {
-        console.error('Error adding new message: ', error);
+        errorToast(error.message);
       });
   };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.header}>

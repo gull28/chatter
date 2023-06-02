@@ -13,12 +13,14 @@ import Toast from 'react-native-toast-message';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {BackButton} from '../../components/BackArrow';
 import {Dropdown} from '../../components/Dropdown';
+import {successToast} from '../../helpers/helpers';
 
 const db = firestore();
 
 export const OtherUserProfilePage = ({route, navigation}) => {
   const {result} = route.params;
-  const {username, id} = result;
+  const {username, id, email} = result;
+  console.log(result);
   const currentUser = firebase.auth().currentUser;
 
   const items = [
@@ -149,18 +151,11 @@ export const OtherUserProfilePage = ({route, navigation}) => {
         sendUser: currentUser.uid,
         reportedUsername: username,
         reportedUser: id,
+        email,
       })
       .then(() => {
         handleReportModalClose();
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Successfully reported user!',
-          visibilityTime: 2000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
+        successToast('Successfully reported user!');
       });
   };
 
