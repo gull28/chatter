@@ -34,6 +34,7 @@ export const GroupChatPage = ({navigation, route}) => {
   const [usersCount, setUsersCount] = useState('');
   const [accessible, setAccessible] = useState(false);
   const [groupDescription, setGroupDescription] = useState('');
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   const flatListRef = useRef(null);
 
@@ -357,11 +358,32 @@ export const GroupChatPage = ({navigation, route}) => {
               groupInfo={chatInfo}
             />
             {isGroupOwner ? (
-              <TouchableOpacity
-                style={modalStyles.deleteButton}
-                onPress={handleDeleteGroup}>
-                <Text style={modalStyles.deleteButtonText}>Delete Group</Text>
-              </TouchableOpacity>
+              <>
+                <TouchableOpacity
+                  style={modalStyles.deleteButton}
+                  onPress={() => setShowConfirmDelete(true)}>
+                  <Text style={modalStyles.deleteButtonText}>Delete Group</Text>
+                </TouchableOpacity>
+                {showConfirmDelete && (
+                  <>
+                    <Text style={modalStyles.confirmText}>
+                      Are you sure you want to delete this group?
+                    </Text>
+                    <TouchableOpacity
+                      style={modalStyles.deleteButton}
+                      onPress={handleDeleteGroup}>
+                      <Text style={modalStyles.deleteButtonText}>
+                        Confirm Delete
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={modalStyles.cancelButton}
+                      onPress={() => setShowConfirmDelete(false)}>
+                      <Text style={modalStyles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </>
             ) : (
               <TouchableOpacity
                 style={modalStyles.leaveButton}
