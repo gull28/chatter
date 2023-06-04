@@ -132,13 +132,14 @@ export const GroupChatPage = ({navigation, route}) => {
 
   const renderMessage = ({item}) => {
     const {senderName, sendTime, content, sender, email} = item;
+    console.log('item!', item);
+    console.log('email!!!', email);
     const showThird = isUserGroupAdmin || isGroupOwner;
     return (
       <ChatMessage
         sender={senderName}
         senderId={sender}
         time={sendTime}
-        email={email}
         message={content}
         currentUser={currentUser.uid}
         groupInfo={chatInfo}
@@ -155,6 +156,29 @@ export const GroupChatPage = ({navigation, route}) => {
     groupDescription,
     accessibility,
   ) => {
+    if (!accessibility) {
+      errorToast('Enter accessibility');
+      return;
+    }
+
+    if (usersCount < 2 || usersCount > 2000) {
+      // Handle invalid count
+      errorToast('Invalid users count!');
+      return;
+    }
+
+    if (groupName.length > 25 || !/^[a-zA-Z0-9\s]+$/.test(groupName)) {
+      // Handle invalid name
+      errorToast('Invalid group name!');
+      return;
+    }
+
+    if (groupDescription.length > 400) {
+      // Handle invalid description
+      errorToast('Invalid description');
+      return;
+    }
+
     const docRef = db.collection('chatGroups').doc(chatId);
     docRef
       .update({

@@ -16,6 +16,7 @@ import {Dropdown} from '../../components/Dropdown';
 import {FriendsList} from '../../components/FriendsList';
 import {GroupList} from '../../components/GroupList';
 import {useFocusEffect} from '@react-navigation/native';
+import {errorToast} from '../../helpers/helpers';
 
 const items = [
   {label: 'Public', value: true},
@@ -134,7 +135,54 @@ export const MenuPage = ({navigation, route}) => {
     }
   };
 
-  const handleCreateGroup = async (count, name, accessibility) => {
+  useEffect(() => {
+    console.log(accessible);
+  }, [accessible]);
+
+  const handleCreateGroup = async (
+    count,
+    name,
+    accessibility,
+    groupDescription,
+    region,
+  ) => {
+    // Validation checks
+    if (name === '' || groupDescription === '' || region === null) {
+      // Handle null values
+      console.error('Null values detected');
+      return;
+    }
+    console.log('allah', {
+      accessibility,
+      groupDescription,
+      region,
+      name,
+      count,
+    });
+    if (!accessibility) {
+      errorToast('Enter accessibility');
+      return;
+    }
+
+    if (count < 2 || count > 2000) {
+      // Handle invalid count
+      console.error('Invalid count');
+      return;
+    }
+
+    if (name.length > 25 || !/^[a-zA-Z0-9\s]+$/.test(name)) {
+      // Handle invalid name
+      console.error('');
+      return;
+    }
+
+    if (groupDescription.length > 400) {
+      // Handle invalid description
+      console.error('Invalid description');
+      return;
+    }
+
+    // Rest of the code if validation passes
     await db
       .collection('chatGroups')
       .doc()
@@ -152,9 +200,16 @@ export const MenuPage = ({navigation, route}) => {
       });
 
     setIsModalVisible(false);
-
     const groups = await getGroupsForCurrentUser();
     setUserGroups(groups);
+  };
+
+  const resetGroupState = () => {
+    setAccessible(true);
+    setGroupDescription('');
+    setGroupName('');
+    setUsersCount(0);
+    setRegion('');
   };
 
   const retrieveDocument = async documentId => {
@@ -331,13 +386,22 @@ export const MenuPage = ({navigation, route}) => {
           <TouchableOpacity
             style={styles.createButton}
             onPress={() =>
-              handleCreateGroup(usersCount, groupName, accessible)
+              handleCreateGroup(
+                usersCount,
+                groupName,
+                accessible,
+                groupDescription,
+                region,
+              )
             }>
             <Text style={styles.createButtonText}>Create</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.cancelButton}
-            onPress={() => setIsModalVisible(false)}>
+            onPress={() => {
+              resetGroupState();
+              setIsModalVisible(false);
+            }}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>

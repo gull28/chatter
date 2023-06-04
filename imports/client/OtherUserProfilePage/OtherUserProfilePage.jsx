@@ -141,6 +141,7 @@ export const OtherUserProfilePage = ({route, navigation}) => {
   }
 
   const sendReport = async (comment, reason) => {
+    console.log('userDati', {email, comment, reason});
     await db
       .collection('userReports')
       .doc()
@@ -219,31 +220,38 @@ export const OtherUserProfilePage = ({route, navigation}) => {
       <Modal visible={isReportModalVisible} animationType="fade">
         <View style={modalStyles.modalContainer}>
           <Text style={modalStyles.title}>Report User: {username}</Text>
-          <Dropdown
-            options={items}
-            selectedValue={reportReason}
-            onValueChange={value => setReportReason(value)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Comment"
-            value={comment}
-            onChangeText={text => setComment(text)}
-            multiline
-            numberOfLines={4}
-          />
+          <View style={modalStyles.inputContainer}>
+            <Dropdown
+              options={items}
+              selectedValue={reportReason}
+              onValueChange={value => setReportReason(value)}
+              containerStyle={modalStyles.dropdownContainer}
+              dropdownStyle={modalStyles.dropdown}
+            />
+            <TextInput
+              style={[modalStyles.input, modalStyles.textInput]}
+              placeholder="Comment"
+              value={comment}
+              onChangeText={text => setComment(text)}
+              multiline
+              numberOfLines={4}
+            />
+          </View>
 
           {comment && (
             <TouchableOpacity
-              style={modalStyles.button}
+              style={[modalStyles.button, modalStyles.reportButton]}
               onPress={() => sendReport(comment, reportReason)}>
-              <Text style={modalStyles.buttonText}>Report user</Text>
+              <Text style={modalStyles.buttonText}>Report User</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
             style={[modalStyles.button, modalStyles.cancelButton]}
             onPress={() => handleReportModalClose()}>
-            <Text style={modalStyles.buttonText}>Cancel</Text>
+            <Text
+              style={[modalStyles.buttonText, modalStyles.cancelButtonText]}>
+              Cancel
+            </Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -325,35 +333,66 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
 });
+
 const modalStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 40,
+    justifyContent: 'space-between', // Added to make cancel button stick to the bottom
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 16,
-    textAlign: 'center',
+    marginBottom: 20,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  dropdownContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
+  dropdown: {
+    width: '100%',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  input: {
+    flex: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  textInput: {
+    minHeight: 100,
+    marginTop: 10,
   },
   button: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#007BFF',
+    padding: 10,
     borderRadius: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginVertical: 8,
-    minWidth: 200,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  reportButton: {
+    backgroundColor: '#FF4136',
   },
   cancelButton: {
     backgroundColor: '#ccc',
   },
   buttonText: {
     color: '#fff',
-    textAlign: 'center',
-    fontSize: 16,
     fontWeight: 'bold',
+  },
+  cancelButtonText: {
+    color: '#000',
+    marginBottom: 10,
   },
 });

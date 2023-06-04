@@ -13,7 +13,6 @@ export const ChatMessage = ({
   navigation,
   senderId,
   sender,
-  email,
   time,
   message,
   currentUser,
@@ -23,7 +22,7 @@ export const ChatMessage = ({
 }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [userData, setUserData] = useState({});
+  const [userEmail, setUserEmail] = useState({});
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const [reportReason, setReportReason] = useState('');
 
@@ -33,6 +32,12 @@ export const ChatMessage = ({
     }
   };
 
+  useEffect(() => {
+    const userDoc = db.collection('users').doc(senderId);
+    userDoc.get().then(doc => {
+      setUserEmail(doc.data().email);
+    });
+  }, [senderId]);
   const items = [
     {label: '', value: ''},
     {label: 'Profanity', value: 'profanity'},
@@ -113,7 +118,7 @@ export const ChatMessage = ({
         sendUser: currentUser,
         reportedUsername: sender,
         reportedUser: senderId,
-        email,
+        email: userEmail,
       })
       .then(() => {
         handleReportModalClose();
@@ -149,7 +154,7 @@ export const ChatMessage = ({
             style={styles.option}
             onPress={() => {
               navigation.navigate('OtherUserProfilePage', {
-                result: {username: sender, id: senderId},
+                result: {username: sender, id: senderId, email: userEmail},
               });
             }}>
             <Text>View profile</Text>
