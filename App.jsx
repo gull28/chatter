@@ -12,6 +12,7 @@ import {OtherUserProfilePage} from './imports/client/OtherUserProfilePage/OtherU
 import {ChatPage} from './imports/client/ChatPage/ChatPage';
 import {GroupChatPage} from './imports/client/ChatPage/GroupChatPage';
 import {ViewGroup} from './imports/client/ViewGroup/ViewGroup';
+
 // npx react-native start
 // npx react-native run-android
 

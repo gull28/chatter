@@ -51,7 +51,9 @@ export const ProfilePage = ({navigation, route}) => {
     try {
       await auth().signOut();
       navigation.navigate('LoginPage');
-    } catch (error) {}
+    } catch (error) {
+      errorToast('Failed to log out!');
+    }
   };
 
   const handleUsernameChange = username => {

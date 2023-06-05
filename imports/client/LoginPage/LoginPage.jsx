@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
-
 import auth from '@react-native-firebase/auth';
 import {errorToast, successToast} from '../../helpers/helpers';
 const db = firestore();
@@ -51,18 +50,21 @@ export const LoginPage = ({navigation}) => {
         navigation.navigate('MenuPage');
       })
       .catch(error => {
-        if (error.code === 'auth/invalid-email') {
-          errorToast('Invalid email address');
-        } else if (error.code === 'auth/user-not-found') {
-          errorToast('User not found');
-        } else if (error.code === 'auth/wrong-password') {
-          errorToast('Wrong password');
-        } else {
-          errorToast(error.message);
+        switch (error.code) {
+          case 'auth/invalid-email':
+            errorToast('Invalid email address');
+            break;
+          case 'auth/user-not-found':
+            errorToast('User not found');
+            break;
+          case 'auth/wrong-password':
+            errorToast('Wrong password');
+            break;
+          default:
+            errorToast(error.message);
         }
       });
   };
-
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>Chatter</Text>

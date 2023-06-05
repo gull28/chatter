@@ -21,8 +21,10 @@ export const RegisterPage = ({navigation}) => {
         return;
       }
 
-      if (username.length > 12) {
-        errorToast('Username should not exceed 12 characters');
+      if (username.length > 12 || username.length < 2) {
+        errorToast(
+          'Username should not exceed 12 characters and be less than 2',
+        );
         return;
       }
 

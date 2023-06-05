@@ -1,12 +1,19 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import auth from '@react-native-firebase/auth';
 
 export const LandingPage = ({navigation}) => {
   useEffect(() => {
-    // Navigate to a different page after the animation ends
     const timeout = setTimeout(() => {
-      navigation.navigate('LoginPage');
+      const unsubscribe = auth().onAuthStateChanged(user => {
+        if (user) {
+          navigation.navigate('MenuPage');
+        } else {
+          navigation.navigate('LoginPage');
+        }
+      });
+      unsubscribe();
     }, 2000);
 
     return () => clearTimeout(timeout);
