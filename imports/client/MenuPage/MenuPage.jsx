@@ -277,7 +277,7 @@ export const MenuPage = ({navigation, route}) => {
           <TextInput
             style={styles.searchBar}
             placeholder="Search"
-            placeholderTextColor="#2196F3"
+            placeholderTextColor="black"
             value={searchQuery}
             onChangeText={text => handleSearch(text)}
           />
