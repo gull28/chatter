@@ -8,7 +8,6 @@ const db = firestore();
 
 export const GroupList = ({navigation, getUserGroupData}) => {
   const [groupList, setGroupList] = useState([]);
-  const currentUserID = auth().currentUser.uid;
 
   useEffect(() => {
     const fetchData = async () => {

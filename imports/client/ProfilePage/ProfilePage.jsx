@@ -135,6 +135,7 @@ export const ProfilePage = ({navigation, route}) => {
           value={username}
           onChangeText={username => handleUsernameChange(username)}
           placeholder="Enter username"
+          placeholderTextColor="black"
           style={styles.input}
         />
       </View>
@@ -144,6 +145,7 @@ export const ProfilePage = ({navigation, route}) => {
           value={oldPassword}
           onChangeText={oldPassword => handleOldPasswordChange(oldPassword)}
           placeholder="Enter old password"
+          placeholderTextColor="black"
           secureTextEntry={true}
           style={styles.input}
         />
@@ -154,6 +156,7 @@ export const ProfilePage = ({navigation, route}) => {
           value={newPassword}
           onChangeText={newPassword => handleNewPasswordChange(newPassword)}
           placeholder="Enter new password"
+          placeholderTextColor="black"
           secureTextEntry={true}
           style={styles.input}
         />
@@ -190,6 +193,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    color: '#000',
   },
   backButton: {
     backgroundColor: '#2196F3',
@@ -228,6 +232,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+    color: '#000',
   },
   saveButton: {
     backgroundColor: '#2196F3',

@@ -277,6 +277,7 @@ export const MenuPage = ({navigation, route}) => {
           <TextInput
             style={styles.searchBar}
             placeholder="Search"
+            placeholderTextColor="#2196F3"
             value={searchQuery}
             onChangeText={text => handleSearch(text)}
           />
@@ -350,12 +351,14 @@ export const MenuPage = ({navigation, route}) => {
           <TextInput
             style={styles.input}
             placeholder="Group Name"
+            placeholderTextColor="black"
             value={groupName}
             onChangeText={text => handleGroupNameChange(text)}
           />
           <TextInput
             style={styles.input}
             placeholder="Number of Users"
+            placeholderTextColor="black"
             value={usersCount}
             keyboardType="phone-pad"
             autoCorrect={false}
@@ -381,7 +384,7 @@ export const MenuPage = ({navigation, route}) => {
             style={styles.descriptionInput}
             placeholder="Add a description about your group!"
             multiline={true}
-            keyboardType="visible-password"
+            placeholderTextColor="black"
             autoCorrect={false}
             value={groupDescription}
             onChangeText={text => setGroupDescription(text)}

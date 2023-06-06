@@ -189,6 +189,7 @@ export const ChatPage = ({navigation, route}) => {
             paddingHorizontal: 10,
             color: '#111',
           }}
+          placeholderTextColor="black"
           onChangeText={text => setNewMessage(text)}
           placeholder="Type a message"
           value={newMessage}

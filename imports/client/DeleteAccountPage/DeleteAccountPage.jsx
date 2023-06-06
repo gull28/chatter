@@ -46,6 +46,7 @@ export const DeleteAccountPage = ({navigation}) => {
       <Text>Are you sure you want to delete your account?</Text>
       <TextInput
         placeholder="Enter password"
+        placeholderTextColor="black"
         value={password}
         onChangeText={password => setPassword(password)}
         secureTextEntry={true}

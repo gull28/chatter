@@ -286,6 +286,7 @@ export const GroupChatPage = ({navigation, route}) => {
       <View style={styles.footer}>
         <TextInput
           style={styles.input}
+          placeholderTextColor="black"
           onChangeText={text => setNewMessage(text)}
           placeholder="Type a message"
           value={newMessage}
@@ -302,6 +303,7 @@ export const GroupChatPage = ({navigation, route}) => {
           <View style={modalStyles.contentContainer}>
             <TextInput
               style={modalStyles.input}
+              placeholderTextColor="black"
               placeholder="Group Name"
               value={groupName}
               onChangeText={text => setGroupName(text)}
@@ -310,6 +312,7 @@ export const GroupChatPage = ({navigation, route}) => {
               style={modalStyles.input}
               placeholder="Number of Users"
               value={usersCount}
+              placeholderTextColor="black"
               keyboardType="phone-pad"
               contextMenuHidden={true}
               onChangeText={text => setUsersCount(text)}
@@ -322,6 +325,7 @@ export const GroupChatPage = ({navigation, route}) => {
             <TextInput
               style={modalStyles.input}
               placeholder="Edit the description!"
+              placeholderTextColor="black"
               value={groupDescription}
               onChangeText={text => setGroupDescription(text)}
             />

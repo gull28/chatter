@@ -232,6 +232,7 @@ export const OtherUserProfilePage = ({route, navigation}) => {
               style={[modalStyles.input, modalStyles.textInput]}
               placeholder="Comment"
               value={comment}
+              placeholderTextColor="black"
               onChangeText={text => setComment(text)}
               multiline
               numberOfLines={4}
@@ -331,6 +332,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     height: 80,
     textAlignVertical: 'top',
+    color: '#000',
   },
 });
 
@@ -369,6 +371,7 @@ const modalStyles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 10,
     paddingVertical: 8,
+    color: '#000',
   },
   textInput: {
     minHeight: 100,

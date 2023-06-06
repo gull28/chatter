@@ -66,38 +66,42 @@ export const RegisterPage = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Registration</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={text => setEmail(text)}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={text => setUsername(text)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={text => setPassword(text)}
-        secureTextEntry
-      />
+      <Text style={styles.logo}>Chatter</Text>
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.inputText}
+          placeholder="Email"
+          placeholderTextColor="#2196F3"
+          onChangeText={setEmail}
+        />
+      </View>
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.inputText}
+          placeholder="Email"
+          placeholderTextColor="#2196F3"
+          onChangeText={setUsername}
+        />
+      </View>
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.inputText}
+          placeholder="Password"
+          placeholderTextColor="#2196F3"
+          secureTextEntry={true}
+          onChangeText={setPassword}
+        />
+      </View>
       <TouchableOpacity
-        style={[styles.button]}
+        style={styles.loginBtn}
         onPress={() => register(email, password, username)}>
-        <Text style={styles.buttonText}>Register</Text>
+        <Text style={styles.loginText}>Register</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
-        style={[styles.button]}
+        style={styles.registerBtn}
         onPress={() => navigation.navigate('LoginPage')}>
-        <Text style={styles.buttonText}>Go back to Logging in</Text>
+        <Text style={styles.registerText}>Back to logging in?</Text>
       </TouchableOpacity>
     </View>
   );
@@ -106,41 +110,53 @@ export const RegisterPage = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  logo: {
+    fontWeight: 'bold',
+    fontSize: 50,
+    color: '#2196F3',
+    marginBottom: 40,
+  },
+  inputView: {
+    width: '80%',
     backgroundColor: '#fff',
+    borderRadius: 25,
+    height: 50,
+    marginBottom: 20,
+    justifyContent: 'center',
     padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#2196F3',
+  inputText: {
+    height: 50,
+    color: 'black',
   },
-  input: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    height: 40,
-    marginBottom: 10,
-    color: '#333',
-  },
-  invalid: {
-    borderColor: 'red',
-    borderWidth: 1,
-  },
-  button: {
+  loginBtn: {
+    width: '80%',
     backgroundColor: '#2196F3',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    height: 40,
-    justifyContent: 'center',
+    borderRadius: 25,
+    height: 50,
     alignItems: 'center',
-    marginTop: 20,
+    justifyContent: 'center',
+    marginTop: 40,
+    marginBottom: 10,
   },
-  disabled: {
-    backgroundColor: '#a9a9a9',
-  },
-  buttonText: {
+  loginText: {
     color: '#fff',
-    fontWeight: 'bold',
+  },
+  registerBtn: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#2196F3',
+  },
+  registerText: {
+    color: '#2196F3',
   },
 });

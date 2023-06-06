@@ -6,14 +6,17 @@ import auth from '@react-native-firebase/auth';
 export const LandingPage = ({navigation}) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
+      console.log('hello :D');
       const unsubscribe = auth().onAuthStateChanged(user => {
         if (user) {
+          console.log('user', user);
           navigation.navigate('MenuPage');
         } else {
+          console.log('null', user);
           navigation.navigate('LoginPage');
         }
       });
-      unsubscribe();
+      return () => unsubscribe();
     }, 2000);
 
     return () => clearTimeout(timeout);

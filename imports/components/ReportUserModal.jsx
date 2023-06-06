@@ -34,12 +34,14 @@ export const ReportUserModal = ({isVisible, message, user, onClose}) => {
         <TextInput
           style={styles.input}
           placeholder="Reason for report"
+          placeholderTextColor={'black'}
           value={reason}
           onChangeText={text => setReason(text)}
         />
         <TextInput
           style={styles.input}
           placeholder="Comment"
+          placeholderTextColor={'black'}
           value={comment}
           onChangeText={text => setComment(text)}
           multiline
@@ -73,6 +75,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     marginBottom: 10,
+    color: '#000',
   },
   buttonContainer: {
     flexDirection: 'row',
