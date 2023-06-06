@@ -482,6 +482,7 @@ const styles = {
     borderWidth: 1,
     borderColor: '#ccc',
     textAlignVertical: 'top',
+    color: '#000',
   },
 
   newChatButton: {
@@ -505,6 +506,7 @@ const styles = {
     borderWidth: 1,
     borderRadius: 5,
     marginTop: 10,
+    color: '#000',
   },
   myDropdownRowStyle: {
     paddingVertical: 10,

@@ -157,12 +157,12 @@ export const ChatMessage = ({
                 result: {username: sender, id: senderId, email: userEmail},
               });
             }}>
-            <Text>View profile</Text>
+            <Text style={{color: 'black'}}>View profile</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.option}
             onPress={() => setIsReportModalVisible(true)}>
-            <Text>Report message</Text>
+            <Text style={{color: 'black'}}>Report message</Text>
           </TouchableOpacity>
           {showThird && (
             <TouchableOpacity
