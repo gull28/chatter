@@ -163,7 +163,7 @@ export const ChatPage = ({navigation, route}) => {
       </View>
       {messages && messages.length === 0 ? (
         <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-          <Text>No messages yet</Text>
+          <Text style={{color: 'black'}}>No messages yet</Text>
         </View>
       ) : (
         <FlatList

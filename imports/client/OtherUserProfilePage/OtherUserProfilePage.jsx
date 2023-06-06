@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 16,
+    color: 'black',
   },
   content: {
     flex: 1,
