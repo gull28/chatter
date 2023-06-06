@@ -16,16 +16,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
     elevation: 4,
   },
   text: {
     fontSize: 18,
-    color: '#2196F3',
+    color: '#000',
   },
 });

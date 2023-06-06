@@ -373,6 +373,7 @@ const modalStyles = StyleSheet.create({
   textInput: {
     minHeight: 100,
     marginTop: 10,
+    color: '#000',
   },
   button: {
     backgroundColor: '#007BFF',

@@ -228,14 +228,17 @@ const styles = StyleSheet.create({
   sender: {
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#000000', // Updated color to black
   },
   message: {
     fontSize: 16,
+    color: '#000000', // Updated color to black
   },
   time: {
     fontSize: 12,
     alignSelf: 'flex-end',
     marginTop: 5,
+    color: '#000000', // Updated color to black
   },
   optionsContainer: {
     marginTop: 10,
@@ -258,10 +261,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#000000', // Updated color to black
   },
   modalMessage: {
     fontSize: 16,
     marginBottom: 10,
+    color: '#000000', // Updated color to black
   },
   modalButton: {
     backgroundColor: '#2196F3',
@@ -290,10 +295,12 @@ const modalStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#000000', // Updated color to black
   },
   message: {
     fontSize: 16,
     marginBottom: 10,
+    color: '#000000', // Updated color to black
   },
   button: {
     backgroundColor: '#2196F3',

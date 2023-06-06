@@ -152,7 +152,7 @@ export const ChatPage = ({navigation, route}) => {
           color="#2196F3"
         />
         <TouchableOpacity
-          style={{flex: 1}}
+          style={{flex: 1, color: '#111'}}
           onPress={() => {
             navigation.navigate('OtherUserProfilePage', {
               result: participantInfo,
@@ -187,6 +187,7 @@ export const ChatPage = ({navigation, route}) => {
             borderWidth: 1,
             borderRadius: 5,
             paddingHorizontal: 10,
+            color: '#111',
           }}
           onChangeText={text => setNewMessage(text)}
           placeholder="Type a message"
@@ -213,5 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#000',
   },
 });

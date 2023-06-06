@@ -415,11 +415,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#000', // Set the color to black
   },
   editButton: {
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'right',
+    color: '#2196F3', // Set the color to #2196F3
   },
   noMessagesContainer: {
     flex: 1,
@@ -428,6 +430,7 @@ const styles = StyleSheet.create({
   },
   noMessagesText: {
     fontSize: 18,
+    color: '#000', // Set the color to black
   },
   createButtonText: {
     color: '#fff',
@@ -443,6 +446,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
+    color: '#000', // Set the color to black
   },
   sendButton: {
     marginLeft: 10,
@@ -452,7 +456,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   sendButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -478,8 +482,9 @@ const modalStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#2196F3',
+    color: '#000',
   },
+
   contentContainer: {
     flex: 1,
     backgroundColor: '#f2f2f2',
@@ -514,7 +519,7 @@ const modalStyles = StyleSheet.create({
     marginVertical: 5,
   },
   deleteButtonText: {
-    color: '#fff', // Set the color to #2196F3
+    color: '#2196F3', // Set the color to #2196F3
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -526,7 +531,7 @@ const modalStyles = StyleSheet.create({
     marginVertical: 5,
   },
   leaveButtonText: {
-    color: '#2196F3', // Set the color to #2196F3
+    color: '#FFFFFF', // Set the color to #2196F3
     fontWeight: 'bold',
     textAlign: 'center',
   },

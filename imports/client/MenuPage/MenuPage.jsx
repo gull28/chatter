@@ -358,6 +358,7 @@ export const MenuPage = ({navigation, route}) => {
             placeholder="Number of Users"
             value={usersCount}
             keyboardType="phone-pad"
+            autoCorrect={false}
             contextMenuHidden={true}
             onChangeText={text => setUsersCount(text)}
           />
@@ -380,6 +381,8 @@ export const MenuPage = ({navigation, route}) => {
             style={styles.descriptionInput}
             placeholder="Add a description about your group!"
             multiline={true}
+            keyboardType="visible-password"
+            autoCorrect={false}
             value={groupDescription}
             onChangeText={text => setGroupDescription(text)}
           />
@@ -434,6 +437,7 @@ const styles = {
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#ccc',
+    color: '#000',
   },
   profileButton: {
     backgroundColor: '#2196F3',
@@ -459,10 +463,12 @@ const styles = {
     height: 40,
     width: '100%',
     paddingHorizontal: 10,
+    borderBottomWidth: 0, // Set the border width to 0 to remove the underline
     marginBottom: 10,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#ccc',
+    color: '#000',
   },
   descriptionInput: {
     height: 120,
@@ -529,6 +535,7 @@ const styles = {
     borderRadius: 10,
     paddingLeft: 10,
     marginBottom: 16,
+    color: '#000',
   },
   createButton: {
     backgroundColor: '#2196F3',
