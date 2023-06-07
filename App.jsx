@@ -1,6 +1,6 @@
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {LandingPage} from './imports/client/LandingPage/LandingPage';
 import {LoginPage} from './imports/client/LoginPage/LoginPage';
 import {MenuPage} from './imports/client/MenuPage/MenuPage';
@@ -12,13 +12,37 @@ import {OtherUserProfilePage} from './imports/client/OtherUserProfilePage/OtherU
 import {ChatPage} from './imports/client/ChatPage/ChatPage';
 import {GroupChatPage} from './imports/client/ChatPage/GroupChatPage';
 import {ViewGroup} from './imports/client/ViewGroup/ViewGroup';
+import {errorToast} from './imports/helpers/helpers';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 // npx react-native start
 // npx react-native run-android
 
 const Stack = createNativeStackNavigator();
 
-const App = () => {
+const App = ({navigation}) => {
+  const checkUserBanned = async () => {
+    const currentUser = auth().currentUser;
+
+    if (currentUser) {
+      const bannedUsersRef = firestore().collection('bannedUsers');
+      const snapshot = await bannedUsersRef.doc(currentUser.uid).get();
+
+      if (snapshot.exists) {
+        // User is banned, redirect to LoginPage
+        // Replace 'LoginPage' with the actual screen/component name
+        errorToast('You have been banned for bad behaviour!');
+        await auth().signOut();
+        navigation.navigate('LoginPage');
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkUserBanned();
+  }, []);
+
   return (
     <>
       <NavigationContainer>

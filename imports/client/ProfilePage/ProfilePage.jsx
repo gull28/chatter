@@ -221,9 +221,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#000',
   },
   infoText: {
     fontSize: 16,
+    color: '#000',
   },
   input: {
     fontSize: 16,

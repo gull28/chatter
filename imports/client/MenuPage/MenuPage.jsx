@@ -48,7 +48,6 @@ export const MenuPage = ({navigation, route}) => {
     useCallback(() => {
       const fetchFriends = async () => {
         const friends = await getUserFriends(currentUser);
-        console.log('aaaaaaaa', friends);
         setUserFriends(friends);
       };
 
@@ -202,6 +201,7 @@ export const MenuPage = ({navigation, route}) => {
     setIsModalVisible(false);
     const groups = await getGroupsForCurrentUser();
     setUserGroups(groups);
+    resetGroupState();
   };
 
   const resetGroupState = () => {
@@ -371,12 +371,13 @@ export const MenuPage = ({navigation, route}) => {
             onValueChange={value => setAccessible(value)}
           />
           <CountryPicker
-            InputFieldStyle={styles.ContainerStyle}
-            DropdownContainerStyle={styles.myDropdownContainerStyle}
-            DropdownRowStyle={styles.myDropdownRowStyle}
+            InputFieldStyle={{...styles.ContainerStyle, color: 'black'}}
             Placeholder="choose country ..."
-            DropdownCountryTextStyle={styles.myDropdownCountryTextStyle}
-            countryNameStyle={styles.mycountryNameStyle}
+            DropdownCountryTextStyle={{
+              ...styles.myDropdownCountryTextStyle,
+              color: 'black',
+            }}
+            countryNameStyle={{...styles.mycountryNameStyle, color: 'black'}}
             flagSize={24}
             selectedItem={country => handleRegion(country)}
           />

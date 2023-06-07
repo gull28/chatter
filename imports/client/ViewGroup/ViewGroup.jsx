@@ -40,12 +40,26 @@ export const ViewGroup = ({navigation, route}) => {
     <View style={{flex: 1}}>
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} color="#2196F3" />
-        <Text style={{marginTop: 16, fontSize: 24, fontWeight: 'bold'}}>
+        <Text
+          style={{
+            marginTop: 16,
+            fontSize: 24,
+            fontWeight: 'bold',
+            color: '#000',
+          }}>
           {name}
         </Text>
       </View>
       <View style={styles.content}>
-        <Text style={{marginTop: 16, fontSize: 16}}>{groupDescription}</Text>
+        <Text style={{marginTop: 16, fontSize: 16, color: '#000'}}>
+          {groupDescription}
+        </Text>
+        <Text
+          style={{
+            marginTop: 16,
+            fontSize: 16,
+            color: '#000',
+          }}>{`${participants.length} / ${count}`}</Text>
         <TouchableOpacity
           onPress={joinGroup}
           style={{

@@ -78,7 +78,7 @@ export const RegisterPage = ({navigation}) => {
       <View style={styles.inputView}>
         <TextInput
           style={styles.inputText}
-          placeholder="Email"
+          placeholder="Username"
           placeholderTextColor="#2196F3"
           onChangeText={setUsername}
         />
