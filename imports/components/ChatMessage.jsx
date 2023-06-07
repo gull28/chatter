@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Dropdown} from './Dropdown';
 import Toast from 'react-native-toast-message';
-import {successToast} from '../helpers/helpers';
+import {errorToast, successToast} from '../helpers/helpers';
 import {firebase} from '@react-native-firebase/auth';
 
 const moment = require('moment');
@@ -91,13 +91,13 @@ export const ChatMessage = ({
               navigation.navigate('MenuPage');
             })
             .catch(error => {
-              console.error(
+              errorToast(
                 `Error banning user with id ${userId} from chat group ${chatGroupId}: ${error}`,
               );
             });
         })
         .catch(error => {
-          console.error(
+          errorToast(
             `Error retrieving chat group with id ${chatGroupId}: ${error}`,
           );
         });
@@ -110,15 +110,6 @@ export const ChatMessage = ({
   };
 
   const sendReport = async (message, reason) => {
-    console.log({
-      message,
-      reason: reason.value,
-      open: true,
-      sendUser: currentUser,
-      reportedUsername: sender,
-      reportedUser: senderId,
-      email: userEmail,
-    });
     await db
       .collection('userReports')
       .doc()
@@ -138,7 +129,6 @@ export const ChatMessage = ({
   };
 
   const sendTime = moment(time).fromNow();
-  console.log(senderId);
   const messageStyle = {
     alignSelf: currentUser === senderId ? 'flex-end' : 'flex-start',
     backgroundColor: currentUser === senderId ? '#b6edfc' : '#E5E5EA',

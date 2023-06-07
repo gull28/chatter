@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {errorToast} from '../helpers/helpers';
 
 const db = firestore();
 
@@ -25,7 +26,6 @@ export const FriendListItem = ({
   const currentUser = firebase.auth().currentUser.uid;
   const [isBanModalVisible, setIsBanModalVisible] = useState(false);
   const [isUserAdministrator, setIsUserAdministrator] = useState(false);
-  console.log('friendsData', friendData);
   const isUserAdmin = userId => {
     return groupInfo.admins.includes(userId);
   };
@@ -73,7 +73,7 @@ export const FriendListItem = ({
         setIsUserAdministrator(true);
       }
     } catch (error) {
-      console.error('Error updating admins:', error);
+      errorToast('Error updating admins:', error);
     }
   };
 
@@ -121,13 +121,13 @@ export const FriendListItem = ({
             navigation.navigate('MenuPage');
           })
           .catch(error => {
-            console.error(
+            errorToast(
               `Error banning user with id ${userId} from chat group ${chatGroupId}: ${error}`,
             );
           });
       })
       .catch(error => {
-        console.error(
+        errorToast(
           `Error retrieving chat group with id ${chatGroupId}: ${error}`,
         );
       });

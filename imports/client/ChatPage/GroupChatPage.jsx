@@ -40,9 +40,7 @@ export const GroupChatPage = ({navigation, route}) => {
 
   const currentUser = firebase.auth().currentUser;
 
-  useEffect(() => {
-    console.log(navigation);
-  }, [navigation]);
+  useEffect(() => {}, [navigation]);
   const items = [
     {label: 'Public', value: true},
     {label: 'Private', value: false},
@@ -65,7 +63,7 @@ export const GroupChatPage = ({navigation, route}) => {
         const conversationData = snapshot.data();
         setIsGroupOwner(conversationData.groupOwner === currentUser.uid);
         setIsUserGroupAdmin(conversationData.admins.includes(currentUser.uid));
-
+        const isBanned = conversationData.bannedUsers.includes(currentUser.uid);
         conversationData.id = chatId;
         setGroupName(conversationData.name);
         setUsersCount(conversationData.count);
@@ -74,14 +72,16 @@ export const GroupChatPage = ({navigation, route}) => {
         } else {
           setAccessible({label: 'Private', value: false});
         }
+
+        if (isBanned) {
+          navigation.navigate('MenuPage');
+        }
         setGroupDescription(conversationData.groupDescription);
         setChatInfo(conversationData);
         const messages = conversationData.messages || [];
         setMessages(messages);
       },
-      error => {
-        console.error('Error fetching chat messages:', error);
-      },
+      error => {},
     );
 
     return () => {
@@ -136,8 +136,6 @@ export const GroupChatPage = ({navigation, route}) => {
 
   const renderMessage = ({item}) => {
     const {senderName, sendTime, content, sender, email} = item;
-    console.log('item!', item);
-    console.log('email!!!', email);
     const showThird = isUserGroupAdmin || isGroupOwner;
     return (
       <ChatMessage
@@ -216,9 +214,7 @@ export const GroupChatPage = ({navigation, route}) => {
       });
 
       setNewMessage('');
-    } catch (error) {
-      console.error('Error adding new message: ', error);
-    }
+    } catch (error) {}
   };
 
   const getGroupParticipants = async groupId => {

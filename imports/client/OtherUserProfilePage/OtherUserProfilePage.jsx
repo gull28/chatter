@@ -20,7 +20,6 @@ const db = firestore();
 export const OtherUserProfilePage = ({route, navigation}) => {
   const {result} = route.params;
   const {username, id, email} = result;
-  console.log(result);
   const currentUser = firebase.auth().currentUser;
 
   const items = [
@@ -141,7 +140,6 @@ export const OtherUserProfilePage = ({route, navigation}) => {
   }
 
   const sendReport = async (comment, reason) => {
-    console.log('userDati', {email, comment, reason});
     await db
       .collection('userReports')
       .doc()

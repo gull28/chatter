@@ -99,7 +99,6 @@ export const ChatPage = ({navigation, route}) => {
 
   const renderMessage = ({item}) => {
     const {senderName, sendTime, content, sender, id, email} = item;
-    console.log(item);
     return (
       <ChatMessage
         sender={senderName}

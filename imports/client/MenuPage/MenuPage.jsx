@@ -129,14 +129,8 @@ export const MenuPage = ({navigation, route}) => {
 
       const groups = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
       return groups;
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
-
-  useEffect(() => {
-    console.log(accessible);
-  }, [accessible]);
 
   const handleCreateGroup = async (
     count,
@@ -148,16 +142,9 @@ export const MenuPage = ({navigation, route}) => {
     // Validation checks
     if (name === '' || groupDescription === '' || region === null) {
       // Handle null values
-      console.error('Null values detected');
+      errorToast('Null values detected!');
       return;
     }
-    console.log('allah', {
-      accessibility,
-      groupDescription,
-      region,
-      name,
-      count,
-    });
     if (!accessibility) {
       errorToast('Enter accessibility');
       return;
@@ -165,19 +152,19 @@ export const MenuPage = ({navigation, route}) => {
 
     if (count < 2 || count > 2000) {
       // Handle invalid count
-      console.error('Invalid count');
+      errorToast('Invalid count!');
       return;
     }
 
     if (name.length > 25 || !/^[a-zA-Z0-9\s]+$/.test(name)) {
       // Handle invalid name
-      console.error('');
+      errorToast('Invalid name!');
       return;
     }
 
     if (groupDescription.length > 400) {
       // Handle invalid description
-      console.error('Invalid description');
+      errorToast('Invalid description!');
       return;
     }
 
