@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
   optionsContainer: {
     marginTop: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   option: {
     backgroundColor: '#E5E5EA',

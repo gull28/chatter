@@ -129,7 +129,7 @@ export const ProfilePage = ({navigation, route}) => {
         <Text style={styles.label}>Email:</Text>
         <Text style={styles.infoText}>{email}</Text>
       </View>
-      <View style={styles.infoContainer}>
+      <View style={{...styles.infoContainer, borderWidth: 0, padding: 0}}>
         <Text style={styles.label}>Username:</Text>
         <TextInput
           value={username}
@@ -139,7 +139,7 @@ export const ProfilePage = ({navigation, route}) => {
           style={styles.input}
         />
       </View>
-      <View style={styles.infoContainer}>
+      <View style={{...styles.infoContainer, borderWidth: 0, padding: 0}}>
         <Text style={styles.label}>Old password:</Text>
         <TextInput
           value={oldPassword}
@@ -150,7 +150,7 @@ export const ProfilePage = ({navigation, route}) => {
           style={styles.input}
         />
       </View>
-      <View style={styles.infoContainer}>
+      <View style={{...styles.infoContainer, borderWidth: 0, padding: 0}}>
         <Text style={styles.label}>New password:</Text>
         <TextInput
           value={newPassword}
@@ -216,6 +216,10 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
   },
   label: {
     fontSize: 16,

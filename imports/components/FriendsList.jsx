@@ -73,6 +73,7 @@ export const FriendsList = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f2f2f2',
-    paddingHorizontal: 16,
+    padding: 10,
+    paddingTop: 2,
   },
 });

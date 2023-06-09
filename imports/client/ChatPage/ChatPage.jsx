@@ -101,6 +101,7 @@ export const ChatPage = ({navigation, route}) => {
     const {senderName, sendTime, content, sender, id, email} = item;
     return (
       <ChatMessage
+        key={sendTime}
         sender={senderName}
         senderId={sender}
         email={email}

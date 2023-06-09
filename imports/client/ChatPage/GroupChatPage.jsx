@@ -139,6 +139,7 @@ export const GroupChatPage = ({navigation, route}) => {
     const showThird = isUserGroupAdmin || isGroupOwner;
     return (
       <ChatMessage
+        key={sendTime}
         sender={senderName}
         senderId={sender}
         time={sendTime}
@@ -475,7 +476,6 @@ const modalStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
-    paddingHorizontal: 20,
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
@@ -491,7 +491,8 @@ const modalStyles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     backgroundColor: '#f2f2f2',
-    padding: 15,
+    padding: 1,
+    paddingTop: 5,
   },
   input: {
     height: 40,
@@ -520,9 +521,10 @@ const modalStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 5,
+    margin: 10,
   },
   deleteButtonText: {
-    color: '#2196F3', // Set the color to #2196F3
+    color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -532,6 +534,7 @@ const modalStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 5,
+    margin: 10,
   },
   leaveButtonText: {
     color: '#FFFFFF', // Set the color to #2196F3
@@ -542,7 +545,8 @@ const modalStyles = StyleSheet.create({
     backgroundColor: '#ccc',
     padding: 10,
     borderRadius: 5,
-    marginTop: 10,
+    margin: 10,
+    marginTop: 5,
   },
   cancelButtonText: {
     color: '#fff',

@@ -202,12 +202,14 @@ export const FriendListItem = ({
 
 const styles = StyleSheet.create({
   container: {
+    padding: 10,
     paddingVertical: 16,
     paddingHorizontal: 20,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     borderRadius: 8,
+    margin: 2,
   },
   friendName: {
     fontSize: 18,

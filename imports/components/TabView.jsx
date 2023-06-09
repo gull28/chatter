@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingVertical: 5,
     paddingHorizontal: 10,
+    backgroundColor: '#f2f2f2',
   },
   tab: {
     flex: 1,

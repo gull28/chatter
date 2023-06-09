@@ -276,7 +276,7 @@ export const MenuPage = ({navigation, route}) => {
         </TouchableOpacity>
       </View>
       {searchQuery.length > 1 ? (
-        <>
+        <View style={{flex: 1, backgroundColor: '#f2f2f2'}}>
           <TabView
             tabs={tabs}
             initialTab={selectedTab}
@@ -306,9 +306,9 @@ export const MenuPage = ({navigation, route}) => {
               ))}
             </View>
           )}
-        </>
+        </View>
       ) : (
-        <>
+        <View style={{flex: 1, backgroundColor: '#fff'}}>
           <TabView
             tabs={menuTabs}
             initialTab={selectedTab}
@@ -330,7 +330,7 @@ export const MenuPage = ({navigation, route}) => {
             onPress={() => setIsModalVisible(true)}>
             <Text style={styles.newChatButtonText}>+</Text>
           </TouchableOpacity>
-        </>
+        </View>
       )}
       <Modal visible={isModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
@@ -358,7 +358,18 @@ export const MenuPage = ({navigation, route}) => {
             onValueChange={value => setAccessible(value)}
           />
           <CountryPicker
-            InputFieldStyle={{...styles.ContainerStyle, color: 'black'}}
+            InputFieldStyle={{
+              color: 'black',
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 5,
+              marginTop: 10,
+              marginBottom: 10,
+              paddingLeft: 15,
+            }}
+            ContainerStyle={{
+              paddingHorizontal: 0,
+            }}
             Placeholder="choose country ..."
             DropdownCountryTextStyle={{
               ...styles.myDropdownCountryTextStyle,
@@ -417,10 +428,12 @@ const styles = {
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    backgroundColor: '#f2f2f2',
   },
   searchBarContainer: {
     flex: 1,
     marginRight: 10,
+    backgroundColor: '000',
   },
   searchBar: {
     height: 40,
@@ -429,6 +442,7 @@ const styles = {
     borderWidth: 1,
     borderColor: '#ccc',
     color: '#000',
+    backgroundColor: 'white',
   },
   profileButton: {
     backgroundColor: '#2196F3',
@@ -442,6 +456,8 @@ const styles = {
   searchResultsContainer: {
     flex: 1,
     padding: 10,
+    paddingTop: 2,
+    backgroundColor: '#f2f2f2',
   },
   modalContainer: {
     flex: 1,
@@ -450,29 +466,18 @@ const styles = {
     backgroundColor: '#fff',
     padding: 20,
   },
-  input: {
-    height: 40,
-    width: '100%',
-    paddingHorizontal: 10,
-    borderBottomWidth: 0, // Set the border width to 0 to remove the underline
-    marginBottom: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    color: '#000',
-  },
   descriptionInput: {
     height: 120,
     width: '100%',
     paddingHorizontal: 10,
-    marginBottom: 10,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#ccc',
     textAlignVertical: 'top',
+    marginTop: 10,
+    marginBottom: 10,
     color: '#000',
   },
-
   newChatButton: {
     position: 'absolute',
     bottom: 20,
@@ -523,11 +528,14 @@ const styles = {
     textAlign: 'center',
   },
   input: {
-    height: 40,
-    backgroundColor: '#f1f1f1',
-    borderRadius: 10,
-    paddingLeft: 10,
-    marginBottom: 16,
+    width: '100%',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 10,
     color: '#000',
   },
   createButton: {

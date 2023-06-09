@@ -11,12 +11,14 @@ export const SearchResult = ({result, onPress}) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
     padding: 10,
-    marginBottom: 10,
-    borderRadius: 10,
-    shadowColor: '#000',
-    elevation: 4,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    borderRadius: 8,
+    margin: 2,
   },
   text: {
     fontSize: 18,
