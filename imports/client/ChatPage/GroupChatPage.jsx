@@ -57,35 +57,37 @@ export const GroupChatPage = ({navigation, route}) => {
   };
   useEffect(() => {
     const conversationRef = db.collection('chatGroups').doc(chatId);
+    const messagesRef = conversationRef.collection('messages'); // Reference to the messages subcollection
 
-    const unsubscribe = conversationRef.onSnapshot(
-      snapshot => {
-        const conversationData = snapshot.data();
-        setIsGroupOwner(conversationData.groupOwner === currentUser.uid);
-        setIsUserGroupAdmin(conversationData.admins.includes(currentUser.uid));
-        const isBanned = conversationData.bannedUsers.includes(currentUser.uid);
-        conversationData.id = chatId;
-        setGroupName(conversationData.name);
-        setUsersCount(conversationData.count);
-        if (conversationData.accessibility) {
-          setAccessible({label: 'Public', value: true});
-        } else {
-          setAccessible({label: 'Private', value: false});
-        }
+    const unsubscribeConversation = conversationRef.onSnapshot(snapshot => {
+      const conversationData = snapshot.data();
+      setIsGroupOwner(conversationData.groupOwner === currentUser.uid);
+      setIsUserGroupAdmin(conversationData.admins.includes(currentUser.uid));
+      const isBanned = conversationData.bannedUsers.includes(currentUser.uid);
+      conversationData.id = chatId;
+      setGroupName(conversationData.name);
+      setUsersCount(conversationData.count);
+      if (conversationData.accessibility) {
+        setAccessible({label: 'Public', value: true});
+      } else {
+        setAccessible({label: 'Private', value: false});
+      }
 
-        if (isBanned) {
-          navigation.navigate('MenuPage');
-        }
-        setGroupDescription(conversationData.groupDescription);
-        setChatInfo(conversationData);
-        const messages = conversationData.messages || [];
-        setMessages(messages);
-      },
-      error => {},
-    );
+      if (isBanned) {
+        navigation.navigate('MenuPage');
+      }
+      setGroupDescription(conversationData.groupDescription);
+      setChatInfo(conversationData);
+    });
+
+    const unsubscribeMessages = messagesRef.onSnapshot(snapshot => {
+      const messages = snapshot.docs.map(doc => doc.data());
+      setMessages(messages);
+    });
 
     return () => {
-      unsubscribe();
+      unsubscribeConversation();
+      unsubscribeMessages();
     };
   }, [chatId]);
 
@@ -139,7 +141,6 @@ export const GroupChatPage = ({navigation, route}) => {
     const showThird = isUserGroupAdmin || isGroupOwner;
     return (
       <ChatMessage
-        key={sendTime}
         sender={senderName}
         senderId={sender}
         time={sendTime}
@@ -201,7 +202,11 @@ export const GroupChatPage = ({navigation, route}) => {
       return; // Don't send empty messages
     }
 
-    const conversationRef = db.collection('chatGroups').doc(chatId);
+    const messagesRef = db
+      .collection('chatGroups')
+      .doc(chatId)
+      .collection('messages'); // Reference to the messages subcollection
+
     try {
       const message = {
         content: newMessage,
@@ -210,12 +215,12 @@ export const GroupChatPage = ({navigation, route}) => {
         senderName: currentUser.displayName, // Add sender's username to message object
       };
 
-      conversationRef.update({
-        messages: firestore.FieldValue.arrayUnion(message),
-      });
+      await messagesRef.add(message); // Add the message to the messages subcollection
 
       setNewMessage('');
-    } catch (error) {}
+    } catch (error) {
+      // Handle the error
+    }
   };
 
   const getGroupParticipants = async groupId => {
@@ -278,7 +283,7 @@ export const GroupChatPage = ({navigation, route}) => {
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
-          keyExtractor={item => item.id}
+          keyExtractor={item => `${item.sender}-${item.sendTime}`}
           onContentSizeChange={handleContentSizeChange}
           onLayout={handleLayout}
         />
@@ -300,7 +305,7 @@ export const GroupChatPage = ({navigation, route}) => {
           <View style={modalStyles.modalHeader}>
             <Text style={modalStyles.modalTitle}>Edit group parameters</Text>
           </View>
-          <View style={modalStyles.contentContainer}>
+          <View style={modalStyles.contentContainer2}>
             <TextInput
               style={modalStyles.input}
               placeholderTextColor="black"
@@ -323,29 +328,37 @@ export const GroupChatPage = ({navigation, route}) => {
               onValueChange={value => setAccessible(value)}
             />
             <TextInput
-              style={modalStyles.input}
+              style={modalStyles.descriptionInput}
               placeholder="Edit the description!"
               placeholderTextColor="black"
               value={groupDescription}
+              multiline={true}
               onChangeText={text => setGroupDescription(text)}
             />
-            <TouchableOpacity
-              style={modalStyles.createButton}
-              onPress={() =>
-                handleUpdateGroup(
-                  usersCount,
-                  groupName,
-                  groupDescription,
-                  accessible.value,
-                )
-              }>
-              <Text style={modalStyles.createButtonText}>Create</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={modalStyles.cancelButton}
-              onPress={() => handleEditModalClose()}>
-              <Text style={modalStyles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
+            <View
+              style={{
+                flex: 1,
+                alignContent: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              <TouchableOpacity
+                style={modalStyles.createButton}
+                onPress={() =>
+                  handleUpdateGroup(
+                    usersCount,
+                    groupName,
+                    groupDescription,
+                    accessible.value,
+                  )
+                }>
+                <Text style={modalStyles.createButtonText}>Create</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{...modalStyles.cancelButton, margin: 0}}
+                onPress={() => handleEditModalClose()}>
+                <Text style={modalStyles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -479,12 +492,12 @@ const modalStyles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    backgroundColor: '#f2f2f2',
   },
 
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
     color: '#000',
   },
 
@@ -494,14 +507,24 @@ const modalStyles = StyleSheet.create({
     padding: 1,
     paddingTop: 5,
   },
+  contentContainer2: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
+    padding: 10,
+    paddingTop: 5,
+  },
+
   input: {
-    height: 40,
     width: '100%',
-    borderColor: '#ccc',
+    fontSize: 16,
     borderWidth: 1,
+    borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
+    marginTop: 10,
     marginBottom: 10,
+    color: '#000',
+    backgroundColor: 'white',
   },
   createButton: {
     backgroundColor: '#2196F3',
@@ -509,6 +532,19 @@ const modalStyles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
     marginBottom: 10,
+  },
+  descriptionInput: {
+    height: 120,
+    width: '100%',
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    textAlignVertical: 'top',
+    marginTop: 10,
+    marginBottom: 10,
+    color: '#000',
+    backgroundColor: 'white',
   },
   createButtonText: {
     color: '#fff',
@@ -545,8 +581,8 @@ const modalStyles = StyleSheet.create({
     backgroundColor: '#ccc',
     padding: 10,
     borderRadius: 5,
-    margin: 10,
     marginTop: 5,
+    margin: 10,
   },
   cancelButtonText: {
     color: '#fff',

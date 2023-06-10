@@ -28,18 +28,6 @@ export const ChatPage = ({navigation, route}) => {
   const flatListRef = useRef(null);
 
   useEffect(() => {
-    const conversationRef = db.collection('conversations').doc(chatId);
-
-    conversationRef.get().then(doc => {
-      if (doc.exists) {
-        const conversation = doc.data();
-        const messages = conversation.messages || [];
-        setMessages(messages);
-      }
-    });
-  }, [chatId]);
-
-  useEffect(() => {
     const getUserData = async () => {
       const userDocRef = db.collection('users').doc(participantId);
       const userDataRefDoc = await userDocRef.get();
@@ -58,6 +46,27 @@ export const ChatPage = ({navigation, route}) => {
     getUserData();
   }, [participantId]);
 
+  useEffect(() => {
+    const conversationRef = db
+      .collection('conversations')
+      .doc(chatId)
+      .collection('messages');
+
+    const unsubscribe = conversationRef
+      .orderBy('sendTime')
+      .onSnapshot(snapshot => {
+        const updatedMessages = [];
+        snapshot.forEach(doc => {
+          updatedMessages.push(doc.data());
+        });
+        setMessages(updatedMessages);
+      });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [chatId]);
+
   const handleContentSizeChange = () => {
     if (messages.length > 0 && !isScrolling) {
       flatListRef.current.scrollToEnd({animated: true});
@@ -67,35 +76,6 @@ export const ChatPage = ({navigation, route}) => {
   const handleLayout = () => {
     flatListRef.current.scrollToEnd({animated: true});
   };
-
-  const handleRealtimeUpdates = snapshot => {
-    const updatedConversation = snapshot.data();
-    const updatedMessages = updatedConversation.messages;
-    setMessages(updatedMessages);
-  };
-
-  // Add a listener to the conversation document to listen for changes
-  useEffect(() => {
-    const conversationRef = db.collection('conversations').doc(chatId);
-    const unsubscribe = conversationRef.onSnapshot(handleRealtimeUpdates);
-
-    // Clean up the listener when the component unmounts
-    return () => unsubscribe();
-  }, [chatId]);
-
-  useEffect(() => {
-    const conversationRef = db.collection('conversations').doc(chatId);
-    conversationRef.onSnapshot(doc => {
-      if (doc.exists) {
-        const conversationData = doc.data();
-        const messages = conversationData.messages || [];
-        setMessages(messages);
-      }
-    });
-
-    // Cleanup listener
-    return () => conversationRef.onSnapshot(() => {});
-  }, [chatId]);
 
   const renderMessage = ({item}) => {
     const {senderName, sendTime, content, sender, id, email} = item;
@@ -113,7 +93,7 @@ export const ChatPage = ({navigation, route}) => {
     );
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (newMessage.length === 0) {
       return; // Don't send empty messages
     }
@@ -123,25 +103,26 @@ export const ChatPage = ({navigation, route}) => {
       return; // Don't send the message if it exceeds the limit
     }
 
-    const conversationRef = db.collection('conversations').doc(chatId);
-    const message = {
-      id: Date.now().toString(),
-      content: newMessage,
-      sendTime: new Date().toISOString(),
-      sender: currentUser,
-      senderName: currentUserData.username,
-    };
+    const conversationRef = db
+      .collection('conversations')
+      .doc(chatId)
+      .collection('messages');
 
-    conversationRef
-      .update({
-        messages: firestore.FieldValue.arrayUnion(message),
-      })
-      .then(() => {
-        setNewMessage('');
-      })
-      .catch(error => {
-        errorToast(error.message);
-      });
+    try {
+      const message = {
+        id: Date.now().toString(),
+        content: newMessage,
+        sendTime: new Date().toISOString(),
+        sender: currentUser,
+        senderName: currentUserData.username,
+      };
+
+      await conversationRef.add(message); // Add the message to the messages subcollection
+
+      setNewMessage('');
+    } catch (error) {
+      // Handle the error
+    }
   };
 
   return (
@@ -170,7 +151,7 @@ export const ChatPage = ({navigation, route}) => {
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
-          keyExtractor={item => item.id}
+          keyExtractor={item => `${item.sender}-${item.sendTime}`}
           onContentSizeChange={handleContentSizeChange}
           onLayout={handleLayout}
         />

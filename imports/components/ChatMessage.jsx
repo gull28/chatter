@@ -47,60 +47,52 @@ export const ChatMessage = ({
     {label: 'Threats or violence', value: 'threats'},
   ];
 
-  const handleBan = (chatGroupId, friendId) => {
+  const handleBan = async (chatGroupId, friendId) => {
     if (groupMessage) {
       const userId = friendId; // user to be banned
       const chatGroupsRef = db.collection('chatGroups').doc(groupInfo.id);
-      // Check if current user is an admin
-      // Remove all messages that contain the banned user's id
-      // Remove the banned user from the admins and participants arrays
-      chatGroupsRef
-        .get()
-        .then(doc => {
-          if (!doc.exists) {
-            return;
-          }
 
-          const data = doc.data();
-          const admins = data.admins || [];
-          const participants = data.participants || [];
+      try {
+        const chatGroupsSnapshot = await chatGroupsRef.get();
 
-          const batch = firestore().batch();
+        if (!chatGroupsSnapshot.exists) {
+          return;
+        }
 
-          if (admins.includes(userId)) {
-            batch.update(chatGroupsRef, {
-              admins: firestore.FieldValue.arrayRemove(userId),
-            });
-          }
+        const data = chatGroupsSnapshot.data();
+        const admins = data.admins || [];
+        const participants = data.participants || [];
 
-          if (participants.includes(userId)) {
-            batch.update(chatGroupsRef, {
-              participants: firestore.FieldValue.arrayRemove(userId),
-            });
-          }
+        const batch = db.batch();
 
+        if (admins.includes(userId)) {
           batch.update(chatGroupsRef, {
-            messages: firestore.FieldValue.arrayRemove(
-              ...data.messages.filter(message => message.sender === userId),
-            ),
+            admins: admin.firestore.FieldValue.arrayRemove(userId),
           });
+        }
 
-          batch
-            .commit()
-            .then(() => {
-              navigation.navigate('MenuPage');
-            })
-            .catch(error => {
-              errorToast(
-                `Error banning user with id ${userId} from chat group ${chatGroupId}: ${error}`,
-              );
-            });
-        })
-        .catch(error => {
-          errorToast(
-            `Error retrieving chat group with id ${chatGroupId}: ${error}`,
-          );
+        if (participants.includes(userId)) {
+          batch.update(chatGroupsRef, {
+            participants: admin.firestore.FieldValue.arrayRemove(userId),
+          });
+        }
+
+        const messagesSubcollectionRef = chatGroupsRef.collection('messages');
+        const messagesQuerySnapshot = await messagesSubcollectionRef
+          .where('sender', '==', userId)
+          .get();
+
+        messagesQuerySnapshot.forEach(doc => {
+          batch.delete(doc.ref);
         });
+
+        await batch.commit();
+        navigation.navigate('MenuPage');
+      } catch (error) {
+        errorToast(
+          `Error banning user with id ${userId} from chat group ${chatGroupId}: ${error}`,
+        );
+      }
     }
   };
 

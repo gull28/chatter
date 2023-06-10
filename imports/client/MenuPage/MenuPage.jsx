@@ -145,6 +145,7 @@ export const MenuPage = ({navigation, route}) => {
       errorToast('Null values detected!');
       return;
     }
+
     if (!accessibility) {
       errorToast('Enter accessibility');
       return;
@@ -168,34 +169,37 @@ export const MenuPage = ({navigation, route}) => {
       return;
     }
 
-    // Rest of the code if validation passes
-    await db
-      .collection('chatGroups')
-      .doc()
-      .set({
+    try {
+      const chatGroupsRef = db.collection('chatGroups');
+      const newGroupRef = chatGroupsRef.doc();
+      const messagesRef = newGroupRef.collection('messages');
+
+      await newGroupRef.set({
         count,
         name,
         groupOwner: currentUser,
         accessibility: accessibility.value,
         admins: [],
         bannedUsers: [],
-        messages: [],
         region,
         groupDescription,
         participants: [currentUser],
       });
 
-    setIsModalVisible(false);
-    const groups = await getGroupsForCurrentUser();
-    setUserGroups(groups);
-    resetGroupState();
+      setIsModalVisible(false);
+      const groups = await getGroupsForCurrentUser();
+      setUserGroups(groups);
+      resetGroupState();
+    } catch (error) {
+      console.log(`Error creating group: ${error}`);
+    }
   };
 
   const resetGroupState = () => {
     setAccessible(true);
     setGroupDescription('');
     setGroupName('');
-    setUsersCount(0);
+    setUsersCount('');
     setRegion('');
   };
 
