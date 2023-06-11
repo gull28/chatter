@@ -312,7 +312,7 @@ export const MenuPage = ({navigation, route}) => {
           )}
         </View>
       ) : (
-        <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <View style={{flex: 1, backgroundColor: '#f2f2f2'}}>
           <TabView
             tabs={menuTabs}
             initialTab={selectedTab}
@@ -370,6 +370,7 @@ export const MenuPage = ({navigation, route}) => {
               marginTop: 10,
               marginBottom: 10,
               paddingLeft: 15,
+              backgroundColor: 'white',
             }}
             ContainerStyle={{
               paddingHorizontal: 0,
@@ -422,7 +423,7 @@ export const MenuPage = ({navigation, route}) => {
 const styles = {
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f2f2f2',
   },
   header: {
     flexDirection: 'row',
@@ -467,7 +468,7 @@ const styles = {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#f2f2f2',
     padding: 20,
   },
   descriptionInput: {
@@ -481,6 +482,7 @@ const styles = {
     marginTop: 10,
     marginBottom: 10,
     color: '#000',
+    backgroundColor: 'white',
   },
   newChatButton: {
     position: 'absolute',
@@ -523,6 +525,7 @@ const styles = {
     padding: 16,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    backgroundColor: '#f2f2f2',
   },
   modalTitle: {
     fontSize: 24,
@@ -541,6 +544,7 @@ const styles = {
     marginTop: 10,
     marginBottom: 10,
     color: '#000',
+    backgroundColor: 'white',
   },
   createButton: {
     backgroundColor: '#2196F3',

@@ -125,7 +125,7 @@ export const ProfilePage = ({navigation, route}) => {
         <BackButton onPress={() => navigation.goBack()} color="#2196F3" />
         <Text style={styles.title}>Profile Page</Text>
       </View>
-      <View style={styles.infoContainer}>
+      <View style={{...styles.infoContainer, backgroundColor: 'white'}}>
         <Text style={styles.label}>Email:</Text>
         <Text style={styles.infoText}>{email}</Text>
       </View>
@@ -185,15 +185,16 @@ export const ProfilePage = ({navigation, route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 10,
+    backgroundColor: '#f2f2f2',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
     color: '#000',
+    backgroundColor: '#f2f2f2',
   },
   backButton: {
     backgroundColor: '#2196F3',
@@ -239,6 +240,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     color: '#000',
+    backgroundColor: 'white',
   },
   saveButton: {
     backgroundColor: '#2196F3',

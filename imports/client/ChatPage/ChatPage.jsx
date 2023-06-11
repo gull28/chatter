@@ -133,7 +133,7 @@ export const ChatPage = ({navigation, route}) => {
           color="#2196F3"
         />
         <TouchableOpacity
-          style={{flex: 1, color: '#111'}}
+          style={{flex: 1, alignItems: 'center'}}
           onPress={() => {
             navigation.navigate('OtherUserProfilePage', {
               result: participantInfo,
@@ -161,6 +161,7 @@ export const ChatPage = ({navigation, route}) => {
           flexDirection: 'row',
           alignItems: 'center',
           marginHorizontal: 10,
+          margin: 7,
         }}>
         <TextInput
           style={{
@@ -169,17 +170,18 @@ export const ChatPage = ({navigation, route}) => {
             borderRadius: 5,
             paddingHorizontal: 10,
             color: '#111',
+            backgroundColor: 'white',
           }}
           placeholderTextColor="black"
           onChangeText={text => setNewMessage(text)}
           placeholder="Type a message"
           value={newMessage}
         />
-        <Text
-          style={{marginLeft: 10, color: 'blue'}}
-          onPress={handleSendMessage}>
-          Send
-        </Text>
+        <View style={styles.sendButton}>
+          <Text style={styles.sendButtonText} onPress={handleSendMessage}>
+            Send
+          </Text>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -197,5 +199,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#000',
+  },
+  sendButton: {
+    marginLeft: 10,
+    backgroundColor: '#2196F3',
+    borderRadius: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  sendButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

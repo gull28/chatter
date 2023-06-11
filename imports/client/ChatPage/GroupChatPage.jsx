@@ -464,6 +464,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     color: '#000', // Set the color to black
+    backgroundColor: 'white',
   },
   sendButton: {
     marginLeft: 10,
