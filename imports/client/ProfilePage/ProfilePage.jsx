@@ -17,9 +17,7 @@ const db = firestore();
 
 export const ProfilePage = ({navigation, route}) => {
   const {user} = route.params;
-
   const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
 
   const [newPassword, setNewPassword] = useState('');
@@ -37,11 +35,10 @@ export const ProfilePage = ({navigation, route}) => {
 
   useEffect(() => {
     const getUserData = async () => {
-      const {username, phoneNumber, email} = await userData();
-
+      const {username, email} = await userData();
+      console.log(username, email);
       setEmail(email);
       setUsername(username);
-      setPhoneNumber(phoneNumber);
     };
 
     getUserData();

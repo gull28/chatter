@@ -121,7 +121,7 @@ export const ChatPage = ({navigation, route}) => {
 
       setNewMessage('');
     } catch (error) {
-      // Handle the error
+      errorToast(error.message);
     }
   };
 

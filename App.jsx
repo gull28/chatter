@@ -28,7 +28,7 @@ const App = ({navigation}) => {
     if (currentUser) {
       const bannedUsersRef = firestore().collection('bannedUsers');
       const snapshot = await bannedUsersRef.doc(currentUser.uid).get();
-
+ 
       if (snapshot.exists) {
         // User is banned, redirect to LoginPage
         // Replace 'LoginPage' with the actual screen/component name

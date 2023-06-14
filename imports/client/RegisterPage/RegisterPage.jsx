@@ -58,8 +58,8 @@ export const RegisterPage = ({navigation}) => {
         email: email,
       });
 
-      navigation.navigate('MenuPage');
       successToast(`Successfully registered user ${username}`);
+      navigation.navigate('MenuPage');
     } catch (error) {
       errorToast(error.message);
     }
