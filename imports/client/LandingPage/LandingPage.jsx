@@ -2,12 +2,26 @@ import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {errorToast, successToast} from '../../helpers/helpers';
+const db = firestore();
 
 export const LandingPage = ({navigation}) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
-      const unsubscribe = auth().onAuthStateChanged(user => {
+      const unsubscribe = auth().onAuthStateChanged(async user => {
         if (user) {
+          const bannedUsersSnapshot = await db
+            .collection('bannedUsers')
+            .where('email', '==', user.uid)
+            .get();
+
+          if (bannedUsersSnapshot.exists) {
+            errorToast('Access denied. Your account has been banned.');
+            auth().signOut(); // Sign out the user
+            return;
+          }
+
           navigation.navigate('MenuPage');
         } else {
           navigation.navigate('LoginPage');
