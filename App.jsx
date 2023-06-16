@@ -3,7 +3,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
 import {LandingPage} from './imports/client/LandingPage/LandingPage';
 import {LoginPage} from './imports/client/LoginPage/LoginPage';
-import {MenuPage} from './imports/client/MenuPage/MenuPage';
 import {RegisterPage} from './imports/client/RegisterPage/RegisterPage';
 import {ProfilePage} from './imports/client/ProfilePage/ProfilePage';
 import Toast from 'react-native-toast-message';
@@ -15,33 +14,19 @@ import {ViewGroup} from './imports/client/ViewGroup/ViewGroup';
 import {errorToast} from './imports/helpers/helpers';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-
+import {MenuPage} from './imports/client/MenuPage/MenuPage';
+import withBanChecker from './imports/helpers/withBanChecker';
 // npx react-native start
 // npx react-native run-android
-
 const Stack = createNativeStackNavigator();
-
-const App = ({navigation}) => {
-  const checkUserBanned = async () => {
-    const currentUser = auth().currentUser;
-
-    if (currentUser) {
-      const bannedUsersRef = firestore().collection('bannedUsers');
-      const snapshot = await bannedUsersRef.doc(currentUser.uid).get();
- 
-      if (snapshot.exists) {
-        // User is banned, redirect to LoginPage
-        // Replace 'LoginPage' with the actual screen/component name
-        errorToast('You have been banned for bad behaviour!');
-        await auth().signOut();
-        navigation.navigate('LoginPage');
-      }
-    }
-  };
-
-  useEffect(() => {
-    checkUserBanned();
-  }, []);
+const App = () => {
+  const BanCheckerMenuPage = withBanChecker(MenuPage);
+  const BanCheckerProfilePage = withBanChecker(ProfilePage);
+  const BanCheckerDeleteAccountPage = withBanChecker(DeleteAccountPage);
+  const BanCheckerOtherUserProfilePage = withBanChecker(OtherUserProfilePage);
+  const BanCheckerChatPage = withBanChecker(ChatPage);
+  const BanCheckerGroupChatPage = withBanChecker(GroupChatPage);
+  const BanCheckerViewGroup = withBanChecker(ViewGroup);
 
   return (
     <>
@@ -70,39 +55,39 @@ const App = ({navigation}) => {
           />
           <Stack.Screen
             name="MenuPage"
-            component={MenuPage}
+            component={BanCheckerMenuPage}
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
             name="ProfilePage"
-            component={ProfilePage}
+            component={BanCheckerProfilePage}
             options={{headerShown: false}}
           />
           <Stack.Screen
             name="DeleteAccountPage"
-            component={DeleteAccountPage}
+            component={BanCheckerDeleteAccountPage}
             options={{headerShown: false}}
           />
           <Stack.Screen
             name="OtherUserProfilePage"
-            component={OtherUserProfilePage}
+            component={BanCheckerOtherUserProfilePage}
             options={{headerShown: false}}
           />
           <Stack.Screen
             name={'ChatPage'}
-            component={ChatPage}
+            component={BanCheckerChatPage}
             options={{headerShown: false}}
           />
           <Stack.Screen
             name={'GroupChatPage'}
-            component={GroupChatPage}
+            component={BanCheckerGroupChatPage}
             options={{headerShown: false}}
           />
           <Stack.Screen
             name={'ViewGroup'}
-            component={ViewGroup}
+            component={BanCheckerViewGroup}
             options={{headerShown: false}}
           />
         </Stack.Navigator>
@@ -111,4 +96,5 @@ const App = ({navigation}) => {
     </>
   );
 };
+
 export default App;

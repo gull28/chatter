@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   TextInput,
@@ -16,38 +16,47 @@ export const LoginPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is logged in, navigate to the appropriate screen
+        successToast('Logged in successfully!');
+        navigation.navigate('MenuPage');
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    // Check if the user is an app admin
+    const appAdminsSnapshot = await db
+      .collection('appAdmins')
+      .where('email', '==', email)
+      .get();
+
+    if (!appAdminsSnapshot.empty) {
+      errorToast(
+        'Access denied. You are not allowed to log in as an app admin.',
+      );
+      return;
+    }
+
+    // Check if the user is banned
+    const bannedUsersSnapshot = await db
+      .collection('bannedUsers')
+      .where('email', '==', email)
+      .get();
+
+    if (!bannedUsersSnapshot.empty) {
+      errorToast('Access denied. Your account has been banned.');
+      return;
+    }
+
     auth()
       .signInWithEmailAndPassword(email, password)
       .then(async userCred => {
         const user = userCred.user;
-
-        // Check if the user is an app admin
-        const appAdminsSnapshot = await db
-          .collection('appAdmins')
-          .doc(user.uid)
-          .get();
-        if (appAdminsSnapshot.exists) {
-          errorToast(
-            'Access denied. You are not allowed to log in as an app admin.',
-          );
-          auth().signOut(); // Sign out the user
-          return;
-        }
-
-        // Check if the user is banned
-        const bannedUsersSnapshot = await db
-          .collection('bannedUsers')
-          .doc(user.uid)
-          .get();
-        if (bannedUsersSnapshot.exists) {
-          errorToast('Access denied. Your account has been banned.');
-          auth().signOut(); // Sign out the user
-          return;
-        }
-
-        successToast('Logged in successfully!');
-        navigation.navigate('MenuPage');
       })
       .catch(error => {
         switch (error.code) {

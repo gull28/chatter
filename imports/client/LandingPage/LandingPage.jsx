@@ -18,7 +18,6 @@ export const LandingPage = ({navigation}) => {
 
           if (bannedUsersSnapshot.exists) {
             errorToast('Access denied. Your account has been banned.');
-            auth().signOut(); // Sign out the user
             return;
           }
 
