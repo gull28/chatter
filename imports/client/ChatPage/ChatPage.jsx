@@ -23,6 +23,9 @@ export const ChatPage = ({navigation, route}) => {
   const [isScrolling, setIsScrolling] = useState(false);
   const [participantInfo, setParticipantInfo] = useState({});
   const [currentUserData, setCurrentUserData] = useState({});
+  const [isSendingMessage, setIsSendingMessage] = useState(false); // Flag to track if a message is currently being sent
+  const [remainingMessageCount, setRemainingMessageCount] = useState(5); // Number of remaining messages allowed within the time window
+  const [isSendAllowed, setIsSendAllowed] = useState(true); // Flag to track if sending messages is allowed
 
   const currentUser = firebase.auth().currentUser.uid;
   const flatListRef = useRef(null);
@@ -103,6 +106,19 @@ export const ChatPage = ({navigation, route}) => {
       return; // Don't send the message if it exceeds the limit
     }
 
+    if (!isSendAllowed) {
+      errorToast(
+        'You have reached the message sending limit. Please wait before sending more messages.',
+      );
+      return; // Don't send the message if the limit has been reached
+    }
+
+    if (isSendingMessage) {
+      return; // Don't send another message while a message is being sent
+    }
+
+    setIsSendingMessage(true);
+
     const conversationRef = db
       .collection('conversations')
       .doc(chatId)
@@ -120,8 +136,24 @@ export const ChatPage = ({navigation, route}) => {
       await conversationRef.add(message); // Add the message to the messages subcollection
 
       setNewMessage('');
+
+      // Decrease the remaining message count
+      setRemainingMessageCount(prevCount => prevCount - 1);
+
+      if (remainingMessageCount === 1) {
+        // Disable sending messages when the limit is reached
+        setIsSendAllowed(false);
+
+        // Enable sending messages after a specific time period (e.g., 10 seconds)
+        setTimeout(() => {
+          setIsSendAllowed(true);
+          setRemainingMessageCount(5); // Reset the remaining message count
+        }, 10000);
+      }
     } catch (error) {
       errorToast(error.message);
+    } finally {
+      setIsSendingMessage(false);
     }
   };
 
@@ -176,6 +208,7 @@ export const ChatPage = ({navigation, route}) => {
           onChangeText={text => setNewMessage(text)}
           placeholder="Type a message"
           value={newMessage}
+          editable={isSendAllowed} // Disable editing if sending messages is not allowed
         />
         <View style={styles.sendButton}>
           <Text style={styles.sendButtonText} onPress={handleSendMessage}>
@@ -186,7 +219,6 @@ export const ChatPage = ({navigation, route}) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',

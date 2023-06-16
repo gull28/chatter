@@ -35,6 +35,9 @@ export const GroupChatPage = ({navigation, route}) => {
   const [accessible, setAccessible] = useState(false);
   const [groupDescription, setGroupDescription] = useState('');
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [isSendingMessage, setIsSendingMessage] = useState(false); // Flag to track if a message is currently being sent
+  const [remainingMessageCount, setRemainingMessageCount] = useState(5); // Number of remaining messages allowed within the time window
+  const [isSendAllowed, setIsSendAllowed] = useState(true); // Flag to track if sending messages is allowed
 
   const flatListRef = useRef(null);
 
@@ -207,6 +210,19 @@ export const GroupChatPage = ({navigation, route}) => {
       .doc(chatId)
       .collection('messages'); // Reference to the messages subcollection
 
+    if (!isSendAllowed) {
+      errorToast(
+        'You have reached the message sending limit. Please wait before sending more messages.',
+      );
+      return; // Don't send the message if the limit has been reached
+    }
+
+    if (isSendingMessage) {
+      return; // Don't send another message while a message is being sent
+    }
+
+    setIsSendingMessage(true);
+
     try {
       const message = {
         content: newMessage,
@@ -218,8 +234,22 @@ export const GroupChatPage = ({navigation, route}) => {
       await messagesRef.add(message); // Add the message to the messages subcollection
 
       setNewMessage('');
+
+      setRemainingMessageCount(prevCount => prevCount - 1);
+
+      if (remainingMessageCount === 1) {
+        // Disable sending messages when the limit is reached
+        setIsSendAllowed(false);
+
+        setTimeout(() => {
+          setIsSendAllowed(true);
+          setRemainingMessageCount(5);
+        }, 10000);
+      }
     } catch (error) {
-      // Handle the error
+      errorToast(error.message);
+    } finally {
+      setIsSendingMessage(false);
     }
   };
 
@@ -295,6 +325,7 @@ export const GroupChatPage = ({navigation, route}) => {
           onChangeText={text => setNewMessage(text)}
           placeholder="Type a message"
           value={newMessage}
+          editable={isSendAllowed} // Disable editing if sending messages is not allowed
         />
         <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
           <Text style={styles.sendButtonText}>Send</Text>

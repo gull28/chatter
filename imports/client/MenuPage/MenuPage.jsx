@@ -38,6 +38,8 @@ export const MenuPage = ({navigation, route}) => {
   const [groupDescription, setGroupDescription] = useState('');
   const [userFriends, setUserFriends] = useState([]);
   const [userGroups, setUserGroups] = useState([]);
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [isCreateGroupAllowed, setIsCreateGroupAllowed] = useState(true);
 
   const tabs = [{label: 'Groups'}, {label: 'Users'}];
 
@@ -168,6 +170,18 @@ export const MenuPage = ({navigation, route}) => {
       errorToast('Invalid description!');
       return;
     }
+    if (!isCreateGroupAllowed) {
+      errorToast(
+        'You have reached the group creation limit. Please wait before creating another group.',
+      );
+      return; // Don't create the group if the limit has been reached
+    }
+
+    if (isCreatingGroup) {
+      return; // Don't create another group while one is being created
+    }
+
+    setIsCreatingGroup(true);
 
     try {
       const chatGroupsRef = db.collection('chatGroups');
@@ -190,8 +204,18 @@ export const MenuPage = ({navigation, route}) => {
       const groups = await getGroupsForCurrentUser();
       setUserGroups(groups);
       resetGroupState();
+
+      // Disable creating groups when the limit is reached
+      setIsCreateGroupAllowed(false);
+
+      // Enable creating groups after a specific time period (e.g., 30 seconds)
+      setTimeout(() => {
+        setIsCreateGroupAllowed(true);
+      }, 30000);
     } catch (error) {
       console.log(`Error creating group: ${error}`);
+    } finally {
+      setIsCreatingGroup(false);
     }
   };
 
