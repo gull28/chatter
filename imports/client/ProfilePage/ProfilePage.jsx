@@ -65,12 +65,7 @@ export const ProfilePage = ({navigation, route}) => {
     setNewPassword(newPassword);
   };
 
-  const saveChanges = async (
-    newPassword,
-    currentPassword,
-    username,
-    phoneNumber,
-  ) => {
+  const saveChanges = async (newPassword, currentPassword, username) => {
     if (
       newPassword.trim() !== '' &&
       currentPassword.trim() !== '' &&
@@ -98,17 +93,25 @@ export const ProfilePage = ({navigation, route}) => {
       );
     }
 
-    if (!username || !phoneNumber) {
+    if (!username) {
       return;
     }
 
-    if (!username || (!phoneNumber && username === userData.username)) {
+    if (!username || username === userData.username) {
       return;
     } else {
+      const usernameSnapshot = await db
+        .collection('users')
+        .where('username', '==', username)
+        .get();
+
+      if (!usernameSnapshot.empty) {
+        errorToast('Username already taken!');
+        return;
+      }
       try {
         await db.collection('users').doc(user).update({
           username: username,
-          phoneNumber: phoneNumber,
         });
       } catch (error) {
         errorToast(error.message);
@@ -159,9 +162,7 @@ export const ProfilePage = ({navigation, route}) => {
         />
       </View>
       <TouchableOpacity
-        onPress={() =>
-          saveChanges(newPassword, oldPassword, username, phoneNumber)
-        }
+        onPress={() => saveChanges(newPassword, oldPassword, username)}
         style={styles.saveButton}>
         <Text style={styles.buttonText}>Save Changes</Text>
       </TouchableOpacity>
