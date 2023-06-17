@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Modal, View, Text, TextInput, Button, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import Toast from 'react-native-toast-message';
 
 export const ReportUserModal = ({isVisible, message, user, onClose}) => {
   const [reason, setReason] = useState('');
@@ -52,6 +53,7 @@ export const ReportUserModal = ({isVisible, message, user, onClose}) => {
           <Button title="Submit" onPress={handleSubmit} />
         </View>
       </View>
+      <Toast />
     </Modal>
   );
 };

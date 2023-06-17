@@ -9,6 +9,7 @@ export const successToast = message => {
     autoHide: true,
     topOffset: 30,
     bottomOffset: 40,
+    zIndex: 9999, // Add the desired z-index value here
   });
 };
 
@@ -21,5 +22,6 @@ export const errorToast = message => {
     autoHide: true,
     topOffset: 30,
     bottomOffset: 40,
+    zIndex: 9999, // Add the desired z-index value here
   });
 };

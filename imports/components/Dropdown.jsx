@@ -7,6 +7,7 @@ import {
   Modal,
   FlatList,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export const Dropdown = ({options, selectedValue, onValueChange}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -48,6 +49,7 @@ export const Dropdown = ({options, selectedValue, onValueChange}) => {
           </View>
         </TouchableOpacity>
       </Modal>
+      <Toast />
     </View>
   );
 };

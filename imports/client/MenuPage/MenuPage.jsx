@@ -17,6 +17,7 @@ import {FriendsList} from '../../components/FriendsList';
 import {GroupList} from '../../components/GroupList';
 import {useFocusEffect} from '@react-navigation/native';
 import {errorToast} from '../../helpers/helpers';
+import Toast from 'react-native-toast-message';
 
 const items = [
   {label: 'Public', value: true},
@@ -144,6 +145,7 @@ export const MenuPage = ({navigation, route}) => {
     // Validation checks
     if (name === '' || groupDescription === '' || region === null) {
       // Handle null values
+
       errorToast('Null values detected!');
       return;
     }
@@ -439,6 +441,7 @@ export const MenuPage = ({navigation, route}) => {
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
+        <Toast />
       </Modal>
     </View>
   );

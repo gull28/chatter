@@ -10,6 +10,7 @@ import {
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {errorToast} from '../helpers/helpers';
+import Toast from 'react-native-toast-message';
 
 const db = firestore();
 
@@ -195,6 +196,7 @@ export const FriendListItem = ({
             onPress={() => handleBan(groupInfo.id, friendId)}
           />
         </View>
+        <Toast />
       </Modal>
     </>
   );

@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Dropdown} from './Dropdown';
-import Toast from 'react-native-toast-message';
 import {errorToast, successToast} from '../helpers/helpers';
 import {firebase} from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message';
 
 const moment = require('moment');
 
@@ -188,6 +188,7 @@ export const ChatMessage = ({
             <Text style={modalStyles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
+        <Toast />
       </Modal>
 
       <Modal visible={isModalVisible} animationType="fade">
@@ -203,6 +204,7 @@ export const ChatMessage = ({
           </TouchableOpacity>
         </View>
       </Modal>
+      <Toast />
     </View>
   );
 };

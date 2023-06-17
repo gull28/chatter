@@ -9,11 +9,11 @@ import {
   TextInput,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import Toast from 'react-native-toast-message';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {BackButton} from '../../components/BackArrow';
 import {Dropdown} from '../../components/Dropdown';
 import {successToast} from '../../helpers/helpers';
+import Toast from 'react-native-toast-message';
 
 const db = firestore();
 
@@ -256,6 +256,7 @@ export const OtherUserProfilePage = ({route, navigation}) => {
             </Text>
           </TouchableOpacity>
         </View>
+        <Toast />
       </Modal>
     </View>
   );

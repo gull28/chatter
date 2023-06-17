@@ -394,6 +394,7 @@ export const GroupChatPage = ({navigation, route}) => {
             </View>
           </View>
         </View>
+        <Toast />
       </Modal>
       <Modal visible={isModalVisible} animationType="slide">
         <View style={modalStyles.modalContainer}>
