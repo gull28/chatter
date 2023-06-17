@@ -67,13 +67,13 @@ export const ChatMessage = ({
 
         if (admins.includes(userId)) {
           batch.update(chatGroupsRef, {
-            admins: admin.firestore.FieldValue.arrayRemove(userId),
+            admins: admins.firestore.FieldValue.arrayRemove(userId),
           });
         }
 
         if (participants.includes(userId)) {
           batch.update(chatGroupsRef, {
-            participants: admin.firestore.FieldValue.arrayRemove(userId),
+            participants: admins.firestore.FieldValue.arrayRemove(userId),
           });
         }
 

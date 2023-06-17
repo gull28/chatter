@@ -83,10 +83,12 @@ export const GroupChatPage = ({navigation, route}) => {
       setChatInfo(conversationData);
     });
 
-    const unsubscribeMessages = messagesRef.onSnapshot(snapshot => {
-      const messages = snapshot.docs.map(doc => doc.data());
-      setMessages(messages);
-    });
+    const unsubscribeMessages = messagesRef
+      .orderBy('sendTime')
+      .onSnapshot(snapshot => {
+        const messages = snapshot.docs.map(doc => doc.data());
+        setMessages(messages);
+      });
 
     return () => {
       unsubscribeConversation();
@@ -105,13 +107,13 @@ export const GroupChatPage = ({navigation, route}) => {
       } else {
         const groupRef = db.collection('chatGroups').doc(chatId);
         await groupRef.update({
-          participants: firestore.FieldValue.arrayRemove(user.uid),
+          participants: firestore.FieldValue.arrayRemove(currentUser.uid),
         });
       }
       setIsModalVisible(false);
       navigation.navigate('MenuPage');
     } catch (error) {
-      errorToast(error.message);
+      console.log(error.message);
     }
   };
 

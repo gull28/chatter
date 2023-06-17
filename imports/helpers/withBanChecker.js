@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
+import {errorToast} from './helpers';
 
 const withBanChecker = WrappedComponent => {
   return ({navigation, route}) => {
@@ -13,7 +14,7 @@ const withBanChecker = WrappedComponent => {
           if (snapshot.exists) {
             navigation.navigate('LoginPage');
             await auth().signOut();
-            console.log('User is banned!');
+            errorToast('You have been banned!');
           }
         });
 
