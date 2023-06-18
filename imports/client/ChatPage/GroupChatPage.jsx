@@ -43,7 +43,6 @@ export const GroupChatPage = ({navigation, route}) => {
 
   const currentUser = firebase.auth().currentUser;
 
-  useEffect(() => {}, [navigation]);
   const items = [
     {label: 'Public', value: true},
     {label: 'Private', value: false},

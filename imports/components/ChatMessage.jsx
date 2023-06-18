@@ -29,9 +29,7 @@ export const ChatMessage = ({
   const currentUser = firebase.auth().currentUser.uid;
 
   const handlePress = () => {
-    if (senderId !== currentUser) {
-      setShowOptions(!showOptions);
-    }
+    setShowOptions(!showOptions);
   };
 
   useEffect(() => {

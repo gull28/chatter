@@ -13,12 +13,14 @@ const withBanChecker = WrappedComponent => {
         .onSnapshot(async snapshot => {
           if (snapshot.exists) {
             navigation.navigate('LoginPage');
-            await auth().signOut();
             errorToast('You have been banned!');
+          } else {
+            return;
           }
         });
 
       return () => unsubscribe();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return <WrappedComponent navigation={navigation} route={route} />;

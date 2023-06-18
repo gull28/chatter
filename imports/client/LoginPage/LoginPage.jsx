@@ -16,18 +16,6 @@ export const LoginPage = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(user => {
-      if (user) {
-        // User is logged in, navigate to the appropriate screen
-        successToast('Logged in successfully!');
-        navigation.navigate('MenuPage');
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   const handleLogin = async () => {
     // Check if the user is an app admin
     const appAdminsSnapshot = await db
@@ -57,6 +45,9 @@ export const LoginPage = ({navigation}) => {
       .signInWithEmailAndPassword(email, password)
       .then(async userCred => {
         const user = userCred.user;
+
+        navigation.navigate('MenuPage');
+        successToast('Logged in successfully!');
       })
       .catch(error => {
         switch (error.code) {
