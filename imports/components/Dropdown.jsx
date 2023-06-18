@@ -49,7 +49,6 @@ export const Dropdown = ({options, selectedValue, onValueChange}) => {
           </View>
         </TouchableOpacity>
       </Modal>
-      <Toast />
     </View>
   );
 };

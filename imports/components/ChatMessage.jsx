@@ -186,7 +186,6 @@ export const ChatMessage = ({
             <Text style={modalStyles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
-        <Toast />
       </Modal>
 
       <Modal visible={isModalVisible} animationType="fade">
@@ -202,7 +201,6 @@ export const ChatMessage = ({
           </TouchableOpacity>
         </View>
       </Modal>
-      <Toast />
     </View>
   );
 };

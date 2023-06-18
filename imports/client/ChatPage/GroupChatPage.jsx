@@ -112,7 +112,7 @@ export const GroupChatPage = ({navigation, route}) => {
       setIsModalVisible(false);
       navigation.navigate('MenuPage');
     } catch (error) {
-      console.log(error.message);
+      errorToast('Error leaving a group!');
     }
   };
 

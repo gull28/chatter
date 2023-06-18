@@ -36,7 +36,6 @@ export const ProfilePage = ({navigation, route}) => {
   useEffect(() => {
     const getUserData = async () => {
       const {username, email} = await userData();
-      console.log(username, email);
       setEmail(email);
       setUsername(username);
     };

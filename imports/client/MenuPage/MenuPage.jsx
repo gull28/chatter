@@ -215,7 +215,7 @@ export const MenuPage = ({navigation, route}) => {
         setIsCreateGroupAllowed(true);
       }, 30000);
     } catch (error) {
-      console.log(`Error creating group: ${error}`);
+      errorToast(`Error creating group`);
     } finally {
       setIsCreatingGroup(false);
     }
