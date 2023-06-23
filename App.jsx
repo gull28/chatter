@@ -16,6 +16,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {MenuPage} from './imports/client/MenuPage/MenuPage';
 import withBanChecker from './imports/helpers/withBanChecker';
+import withUserPresence from './imports/helpers/withUserPresence';
 // npx react-native start
 // npx react-native run-android
 const Stack = createNativeStackNavigator();
@@ -27,7 +28,6 @@ const App = () => {
   const BanCheckerChatPage = withBanChecker(ChatPage);
   const BanCheckerGroupChatPage = withBanChecker(GroupChatPage);
   const BanCheckerViewGroup = withBanChecker(ViewGroup);
-
   return (
     <>
       <NavigationContainer>
@@ -97,4 +97,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default withUserPresence(App);
