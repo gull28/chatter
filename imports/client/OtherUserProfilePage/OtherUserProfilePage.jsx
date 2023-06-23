@@ -14,16 +14,16 @@ import {BackButton} from '../../components/BackArrow';
 import {Dropdown} from '../../components/Dropdown';
 import {successToast} from '../../helpers/helpers';
 import Toast from 'react-native-toast-message';
+import moment from 'moment';
 
 const db = firestore();
 
 export const OtherUserProfilePage = ({route, navigation}) => {
   const {result} = route.params;
-  const {username, id, email} = result;
+  const {username, id, email, presence} = result;
   const currentUser = firebase.auth().currentUser;
 
   const items = [
-    {label: '', value: ''},
     {label: 'Profanity', value: 'profanity'},
     {label: 'Racism or prejudice', value: 'racism'},
     {label: 'Threats or violence', value: 'threats'},
@@ -31,7 +31,6 @@ export const OtherUserProfilePage = ({route, navigation}) => {
 
   const [isFriend, setIsFriend] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [comment, setComment] = useState('');
@@ -157,6 +156,20 @@ export const OtherUserProfilePage = ({route, navigation}) => {
         successToast('Successfully reported user!');
       });
   };
+  // Q: What is the issue here?
+
+  const userPresence = presence => {
+    if (presence?.status === 'online') {
+      return 'Online';
+    } else if (presence?.status === 'offline') {
+      // This is giving me the wrong time
+      return moment(presence.lastUpdated).fromNow();
+    } else {
+      return 'Offline';
+    }
+  };
+
+  console.log(userPresence(presence));
 
   const handleChat = async () => {
     const chatId = await findConversationId(
@@ -176,7 +189,9 @@ export const OtherUserProfilePage = ({route, navigation}) => {
           onPress={() => navigation.navigate('MenuPage')}
           color="#2196F3"
         />
-        <Text style={styles.title}>{username}</Text>
+        <Text style={styles.title}>
+          {username} {userPresence(presence)}
+        </Text>
         <View style={{flex: 1}} />
       </View>
       <View style={styles.content}>
