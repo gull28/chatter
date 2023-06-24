@@ -17,6 +17,7 @@ import {Dropdown} from '../../components/Dropdown';
 import Toast from 'react-native-toast-message';
 import {BackButton} from '../../components/BackArrow';
 import {errorToast, successToast} from '../../helpers/helpers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const db = firestore();
 
@@ -38,6 +39,7 @@ export const GroupChatPage = ({navigation, route}) => {
   const [isSendingMessage, setIsSendingMessage] = useState(false); // Flag to track if a message is currently being sent
   const [remainingMessageCount, setRemainingMessageCount] = useState(5); // Number of remaining messages allowed within the time window
   const [isSendAllowed, setIsSendAllowed] = useState(true); // Flag to track if sending messages is allowed
+  const [storedMessages, setStoredMessages] = useState([]);
 
   const flatListRef = useRef(null);
 

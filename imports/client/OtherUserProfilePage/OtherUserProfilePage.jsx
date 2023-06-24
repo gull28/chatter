@@ -14,9 +14,13 @@ import {BackButton} from '../../components/BackArrow';
 import {Dropdown} from '../../components/Dropdown';
 import {successToast} from '../../helpers/helpers';
 import Toast from 'react-native-toast-message';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import moment from 'moment';
 
 const db = firestore();
+
+dayjs.extend(relativeTime);
 
 export const OtherUserProfilePage = ({route, navigation}) => {
   const {result} = route.params;
@@ -163,13 +167,12 @@ export const OtherUserProfilePage = ({route, navigation}) => {
       return 'Online';
     } else if (presence?.status === 'offline') {
       // This is giving me the wrong time
-      return moment(presence.lastUpdated).fromNow();
+      const relativeDate = presence.lastUpdated.toDate();
+      return moment(relativeDate).fromNow();
     } else {
       return 'Offline';
     }
   };
-
-  console.log(userPresence(presence));
 
   const handleChat = async () => {
     const chatId = await findConversationId(
