@@ -18,6 +18,7 @@ import Toast from 'react-native-toast-message';
 import {BackButton} from '../../components/BackArrow';
 import {errorToast, successToast} from '../../helpers/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {leaveChatGroup} from '../../helpers/methods';
 
 const db = firestore();
 
@@ -87,36 +88,40 @@ export const GroupChatPage = ({navigation, route}) => {
     const unsubscribeMessages = messagesRef
       .orderBy('sendTime')
       .onSnapshot(snapshot => {
-        const messages = snapshot.docs.map(doc => doc.data());
+        const messages = snapshot.docs.map(doc => {
+          const messageData = doc.data();
+          const updatedMessage = {id: doc.id, ...messageData};
+
+          if (
+            messageData.usersRead &&
+            !messageData.usersRead.includes(currentUser.uid)
+          ) {
+            updatedMessage.usersRead = [
+              ...messageData.usersRead,
+              currentUser.uid,
+            ];
+          } else if (!messageData.usersRead) {
+            updatedMessage.usersRead = [currentUser.uid];
+          }
+
+          return updatedMessage;
+        });
+
+        // commit the changes using batch
+        const batch = db.batch();
+        messages.forEach(message => {
+          const messageRef = messagesRef.doc(message.id);
+          batch.update(messageRef, {usersRead: message.usersRead});
+        });
+        batch.commit();
+
         setMessages(messages);
       });
-
     return () => {
       unsubscribeConversation();
       unsubscribeMessages();
     };
   }, [chatId]);
-
-  const handleLeaveGroup = async () => {
-    try {
-      if (isUserGroupAdmin) {
-        const groupRef = db.collection('chatGroups').doc(chatId);
-        await groupRef.update({
-          participants: firestore.FieldValue.arrayRemove(currentUser.uid),
-          admins: firestore.FieldValue.arrayRemove(currentUser),
-        });
-      } else {
-        const groupRef = db.collection('chatGroups').doc(chatId);
-        await groupRef.update({
-          participants: firestore.FieldValue.arrayRemove(currentUser.uid),
-        });
-      }
-      setIsModalVisible(false);
-      navigation.navigate('MenuPage');
-    } catch (error) {
-      errorToast('Error leaving a group!');
-    }
-  };
 
   const handleEditModalClose = () => {
     setIsEditModalVisible(false);
@@ -232,6 +237,7 @@ export const GroupChatPage = ({navigation, route}) => {
         sendTime: new Date().toISOString(),
         sender: currentUser.uid,
         senderName: currentUser.displayName, // Add sender's username to message object
+        usersRead: [currentUser.uid], // Add sender's uid to the usersRead array
       };
 
       await messagesRef.add(message); // Add the message to the messages subcollection
@@ -439,7 +445,14 @@ export const GroupChatPage = ({navigation, route}) => {
             ) : (
               <TouchableOpacity
                 style={modalStyles.leaveButton}
-                onPress={handleLeaveGroup}>
+                onPress={() =>
+                  leaveChatGroup(isUserGroupAdmin, chatId, currentUser).then(
+                    () => {
+                      setIsModalVisible(false);
+                      navigation.navigate('MenuPage');
+                    },
+                  )
+                }>
                 <Text style={modalStyles.leaveButtonText}>Leave Group</Text>
               </TouchableOpacity>
             )}

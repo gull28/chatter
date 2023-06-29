@@ -13,6 +13,7 @@ import auth, {firebase} from '@react-native-firebase/auth';
 import {ChatMessage} from '../../components/ChatMessage';
 import {BackButton} from '../../components/BackArrow';
 import {errorToast} from '../../helpers/helpers';
+import {getCurrentUserData, getUserData} from '../../helpers/methods';
 
 const db = firestore();
 
@@ -31,22 +32,13 @@ export const ChatPage = ({navigation, route}) => {
   const flatListRef = useRef(null);
 
   useEffect(() => {
-    const getUserData = async () => {
-      const userDocRef = db.collection('users').doc(participantId);
-      const userDataRefDoc = await userDocRef.get();
-      const userData = userDataRefDoc.data();
-      setParticipantInfo(userData);
-    };
+    getCurrentUserData(currentUser).then(data => {
+      setCurrentUserData(data);
+    });
 
-    const getCurrentUserData = async () => {
-      const userDocRef = db.collection('users').doc(currentUser);
-      const userDataRefDoc = await userDocRef.get();
-      const userData = userDataRefDoc.data();
-      setCurrentUserData(userData);
-    };
-
-    getCurrentUserData();
-    getUserData();
+    getUserData(participantId).then(data => {
+      setParticipantInfo(data);
+    });
   }, [participantId]);
 
   useEffect(() => {
@@ -96,7 +88,7 @@ export const ChatPage = ({navigation, route}) => {
     );
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (message, currentUser, currentUsername) => {
     if (newMessage.length === 0) {
       return; // Don't send empty messages
     }
@@ -151,7 +143,7 @@ export const ChatPage = ({navigation, route}) => {
         }, 10000);
       }
     } catch (error) {
-      errorToast(error.message);
+      console.error(error);
     } finally {
       setIsSendingMessage(false);
     }
